@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Files and Directories about visual studio
+.vs/
+./output
+*.vcxproj*
+*.sln
