@@ -33,6 +33,6 @@
 
 # Files and Directories about visual studio
 .vs/
-./output
+output/
 *.vcxproj*
 *.sln
