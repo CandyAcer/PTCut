@@ -1,19 +1,19 @@
-// $Intro: 本文件定义线段与三角形的相交类型.
-// $License: GPL-3.0-or-later
+// $License: GPL-3.0
+// $Author: Liu Zhiqiang(from Beihang University)
+// $Email: lzhq0930@gmail.com
 // 
-// 
-// $Author: Liu Zhiqiang
 
 
-
-#ifndef MCAL_ALGORITHM_INTERSECTION_TYPE_H
-#define MCAL_ALGORITHM_INTERSECTION_TYPE_H
-
+#ifndef MCAL_ALGO_INTERSECTION_TYPE_H
+#define MCAL_ALGO_INTERSECTION_TYPE_H
 
 namespace MCAL    // Mesh Cut Algorithm Libaray, 存放多面体网格切割算法的实现
 {
 
-	enum IntersectionType { ON_VERTEX, ON_EDGE, ON_FACE, EMPTY, COPLANAR_TRIANGLES };
+enum IntersectionType 
+{ 
+	ON_VERTEX, ON_EDGE, ON_FACE, EMPTY, COPLANAR_TRIANGLES 
+};
 
 }	// namespace MCAL
 

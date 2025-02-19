@@ -1,7 +1,9 @@
 // $License: GPL-3.0
-// $Author: Liu Zhiqiang (from Beihang University)
+// $Author: Liu Zhiqiang(from Beihang University)
 // $Email: lzhq0930@gmail.com
-// $Description: 
+// 
+// Geometric elements(vertex, edge, face, cell) in polyhedral mesh are represented
+// by index class, which encapsulate an integer and define its behavior.
 // 
 
 
@@ -12,7 +14,6 @@
 #include <limits>
 #include <cstddef>
 #include <functional>
-
 
 namespace MCAL {   // Mesh Cut Algorithm Libaray, 存放多面体网格切割算法的所有代码
 namespace MESH {   // 存放多面体网格实现的相关代码
@@ -46,10 +47,8 @@ public:
     // 类型转换
     operator size_type() const { return index; }
 
-    // 将index重置为非法值
     void reset() { index = std::numeric_limits<size_type>::max(); }
 
-    // 判断index是否合法
     bool is_valid() const
     {
         size_type inf = std::numeric_limits<size_type>::max();
@@ -118,39 +117,36 @@ public:
 
 /*
 * Implementation for PolyhedralMesh::EdgeIndex.
-* Note: CGAL还实现了HalfedgeIndex, 这是由于表面网格的Edge对应两个Halfedge,
-*       但多面体网格的edge不再具有这种性质, 故不再沿用.
 */
-class PGEdgeIndex : public BaseIndex
+class PMEdgeIndex : public BaseIndex
 {
 public:
-    explicit PGEdgeIndex(size_type idx = std::numeric_limits<size_type>::max())
+    explicit PMEdgeIndex(size_type idx = std::numeric_limits<size_type>::max())
         : BaseIndex(idx)
-    {
-    }
+    {}
 
-    // 以下代码的目的是禁止PGEdgeIndex与本类型以外的数据做比较, 避免不必要的错误
+    // 以下代码的目的是禁止PMEdgeIndex与本类型以外的数据做比较, 避免不必要的错误
     template<typename T> bool operator==(const T&) const = delete;
     template<typename T> bool operator!=(const T&) const = delete;
     template<typename T> bool operator<(const T&) const = delete;
 
-    bool operator==(const PGEdgeIndex& rhs) const
+    bool operator==(const PMEdgeIndex& rhs) const
     {
         return this->index == rhs.index;
     }
 
-    bool operator!=(const PGEdgeIndex& rhs) const
+    bool operator!=(const PMEdgeIndex& rhs) const
     {
         return this->index != rhs.index;
     }
 
-    bool operator<(const PGEdgeIndex& rhs) const
+    bool operator<(const PMEdgeIndex& rhs) const
     {
         return this->index < rhs.index;
     }
 
     // 测试输出
-    friend std::ostream& operator<<(std::ostream& os, PGEdgeIndex const& e)
+    friend std::ostream& operator<<(std::ostream& os, PMEdgeIndex const& e)
     {
         return (os << 'E' << (size_type)e);
     }
@@ -159,36 +155,35 @@ public:
 /*
 * Implementation for PolyhedralMesh::FaceIndex.
 */
-class PGFaceIndex : public BaseIndex
+class PMFaceIndex : public BaseIndex
 {
 public:
-    explicit PGFaceIndex(size_type idx = std::numeric_limits<size_type>::max())
+    explicit PMFaceIndex(size_type idx = std::numeric_limits<size_type>::max())
         : BaseIndex(idx)
-    {
-    }
+    {}
 
-    // 以下代码的目的是禁止PGFaceIndex与本类型以外的数据做比较, 避免不必要的错误
+    // 以下代码的目的是禁止PMFaceIndex与本类型以外的数据做比较, 避免不必要的错误
     template<typename T> bool operator==(const T&)const = delete;
     template<typename T> bool operator!=(const T&)const = delete;
     template<typename T> bool operator<(const T&)const = delete;
 
-    bool operator==(const PGFaceIndex& rhs) const
+    bool operator==(const PMFaceIndex& rhs) const
     {
         return this->index == rhs.index;
     }
 
-    bool operator!=(const PGFaceIndex& rhs) const
+    bool operator!=(const PMFaceIndex& rhs) const
     {
         return this->index != rhs.index;
     }
 
-    bool operator<(const PGFaceIndex& rhs) const
+    bool operator<(const PMFaceIndex& rhs) const
     {
         return this->index < rhs.index;
     }
 
     // 测试输出
-    friend std::ostream& operator<<(std::ostream& os, PGFaceIndex const& f)
+    friend std::ostream& operator<<(std::ostream& os, PMFaceIndex const& f)
     {
         return (os << 'F' << (size_type)f);
     }
@@ -197,42 +192,41 @@ public:
 /*
 * Implementation for PolyhedralMesh::CellIndex.
 */
-class PGCellIndex : public BaseIndex
+class PMCellIndex : public BaseIndex
 {
 public:
-    explicit PGCellIndex(size_type idx = std::numeric_limits<size_type>::max())
+    explicit PMCellIndex(size_type idx = std::numeric_limits<size_type>::max())
         : BaseIndex(idx)
-    {
-    }
+    {}
 
-    // 以下代码的目的是禁止PGFaceIndex与本类型以外的数据做比较, 避免不必要的错误
+    // 以下代码的目的是禁止PMFaceIndex与本类型以外的数据做比较, 避免不必要的错误
     template<typename T> bool operator==(const T&)const = delete;
     template<typename T> bool operator!=(const T&)const = delete;
     template<typename T> bool operator<(const T&)const = delete;
 
-    bool operator==(const PGCellIndex& rhs)const
+    bool operator==(const PMCellIndex& rhs)const
     {
         return this->index == rhs.index;
     }
 
-    bool operator!=(const PGCellIndex& rhs)const
+    bool operator!=(const PMCellIndex& rhs)const
     {
         return this->index != rhs.index;
     }
 
-    bool operator<(const PGCellIndex& rhs)const
+    bool operator<(const PMCellIndex& rhs)const
     {
         return this->index < rhs.index;
     }
 
     // 测试输出
-    friend std::ostream& operator<<(std::ostream& os, PGCellIndex const& c)
+    friend std::ostream& operator<<(std::ostream& os, PMCellIndex const& c)
     {
         return (os << 'C' << (size_type)c);
     }
 };
 
-}	// namespace MCAL::GRID
+}	// namespace MCAL::MESH
 }	// namespace MCAL
 
 
@@ -259,40 +253,40 @@ namespace std
 // 提供std::hash<Key>的特化版本
 
 template <>
-struct hash<MCAL::GRID::PMVertexIndex>
-    :public std::unary_function< MCAL::GRID::PMVertexIndex, std::size_t>
+struct hash<MCAL::MESH::PMVertexIndex>
+    :public std::unary_function< MCAL::MESH::PMVertexIndex, std::size_t>
 {
-    std::size_t operator()(const MCAL::GRID::PMVertexIndex& i) const
+    std::size_t operator()(const MCAL::MESH::PMVertexIndex& i) const
     {
         return i;
     }
 };
 
 template <>
-struct hash<MCAL::GRID::PGEdgeIndex>
-    :public std::unary_function< MCAL::GRID::PGEdgeIndex, std::size_t>
+struct hash<MCAL::MESH::PMEdgeIndex>
+    :public std::unary_function< MCAL::MESH::PMEdgeIndex, std::size_t>
 {
-    std::size_t operator()(const MCAL::GRID::PGEdgeIndex& i) const
+    std::size_t operator()(const MCAL::MESH::PMEdgeIndex& i) const
     {
         return i;
     }
 };
 
 template <>
-struct hash<MCAL::GRID::PGFaceIndex>
-    :public std::unary_function< MCAL::GRID::PGFaceIndex, std::size_t>
+struct hash<MCAL::MESH::PMFaceIndex>
+    :public std::unary_function< MCAL::MESH::PMFaceIndex, std::size_t>
 {
-    std::size_t operator()(const MCAL::GRID::PGFaceIndex& i) const
+    std::size_t operator()(const MCAL::MESH::PMFaceIndex& i) const
     {
         return i;
     }
 };
 
 template <>
-struct hash<MCAL::GRID::PGCellIndex>
-    :public std::unary_function< MCAL::GRID::PGCellIndex, std::size_t>
+struct hash<MCAL::MESH::PMCellIndex>
+    :public std::unary_function< MCAL::MESH::PMCellIndex, std::size_t>
 {
-    std::size_t operator()(const MCAL::GRID::PGCellIndex& i) const
+    std::size_t operator()(const MCAL::MESH::PMCellIndex& i) const
     {
         return i;
     }
