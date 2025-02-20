@@ -8,9 +8,9 @@ Mesh Booleans are an essential tool to create and edit digital shapes among geom
 
 * Innovate polyhedral mesh data structure. I adopt an index and array-based framework to manage mesh elements and its properties in a unified and dynamic way. As for local incidence information encoding, it record incident vertices, edges, faces and halfedges for each cell. For each vertex, edge and face, it store information refer to one of its incident halfedge. By this way, I accomplish abundant interfaces required in algorithm, such as topological query and modification, which have a low computational cost and memory footprint.
 
-<img src="./data/img/polyhedral_mesh_framework.png" title="polyhedral mesh framework" style="zoom: 55%;" />
+<img src="./data/img/polyhedral_mesh_framework.png" title="polyhedral mesh framework" style="zoom: 40%;" />
 
-<img src="./data/img/incident_information_encode.png" title="incident information encoding manner" style="zoom:58%;" />
+<img src="./data/img/incident_information_encode.png" title="incident information encoding manner" style="zoom:40%;" />
 
 * New method to compute Boolean Operations on surface and polyhedral mesh. Firstly, it correctly identify intersecting elements in the input, compute intersection points and lines. Then, it incorporate intersection points and lines into mesh faces, subdivide them into a set of triangles. Finally, each mesh element is deemed as being inside or outside each input object, the result is extracted from mesh elements generated in the above step. Robustness is guaranteed by representing coordinates by rational numbers along with introducing arithmetic filtering. High performance is achieved by recording necessary intermediate data to avoid expensive search and increasing efficiency of topological query and modification.
 
