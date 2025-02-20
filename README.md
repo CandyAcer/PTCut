@@ -4,9 +4,9 @@ PTCut is a computational geometric algorithm that implemented in C++. It can com
 
 ### 1. Highlight
 
-Mesh Booleans are an essential tool to create and edit digital shapes among geometry processing tasks. However, Booleans on two surface mesh, surface mesh and tetrahedral grid, surface mesh and hexahedral grid form the predominant part of current methods. We present a novel method to compute Boolean operations on surface and polyhedral mesh.
+Mesh Booleans are an essential tool to create and edit digital shapes among geometry processing tasks. However, Booleans on two surface mesh, surface mesh and tetrahedral grid, surface mesh and hexahedral grid form the predominant part of current methods. I present a novel method to compute Boolean operations on surface and polyhedral mesh.
 
-* Innovate polyhedral mesh data structure. I adopt an index and array-based framework to manage mesh elements and its properties in a unified and dynamic way. As for local incidence information encoding, it record incident vertices, edges, faces and halfedges for each cell. For each vertex, edge and face, it store information refer to one of its incident halfedge. By this way, I accomplish abundant interfaces required in algorithm, such as topological query and modification, which have a low computational cost and memory footprint.
+* Innovate polyhedral mesh data structure. I adopt an index and array-based framework to manage mesh elements and its properties in a unified and dynamic way. As for local incidence information encoding, I record incident vertices, edges, faces and halfedges for each cell. For each vertex, edge and face, I store information refer to one of its incident halfedge. By this way, I accomplish abundant interfaces required in algorithm, such as topological query and modification, which have a low computational cost and memory footprint.
 
 <img src="./data/img/polyhedral_mesh_framework.png" title="polyhedral mesh framework" style="zoom: 40%;" />
 
@@ -32,7 +32,7 @@ Mesh Booleans are an essential tool to create and edit digital shapes among geom
 
 To be honest, there are a lot of work to do:
 
-* Uniformed file format, just as `.off/.obj/.vtk`.
+* Uniform file format, just as `.off/.obj/.vtk`.
 * Handle coplanar case.
 * Fix bug in compute intersection points.
 * Don't rely on CGAL and boost, maybe develop tiny containers, geometric predicates, and so on.
