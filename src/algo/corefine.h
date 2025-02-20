@@ -1,6 +1,6 @@
 // $License: GPL-3.0
 // $Author: Liu Zhiqiang(from Beihang University)
-// $Email: lzhq0930@gmail.com
+// $Email: lzhq0930@gmail.com(liuzhiqiang@buaa.edu.cn)
 // 
 // Part 2 of PTCut, add intersection points and segments into surface and 
 // polyhedral mesh, triangulate mesh to form a well-defined topology.

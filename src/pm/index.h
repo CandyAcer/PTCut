@@ -1,6 +1,6 @@
 // $License: GPL-3.0
 // $Author: Liu Zhiqiang(from Beihang University)
-// $Email: lzhq0930@gmail.com
+// $Email: lzhq0930@gmail.com(liuzhiqiang@buaa.edu.cn)
 // 
 // Geometric elements(vertex, edge, face, cell) in polyhedral mesh are represented
 // by index class, which encapsulate an integer and define its behavior.

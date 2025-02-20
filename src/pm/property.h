@@ -1,6 +1,6 @@
 // $License: GPL-3.0
 // $Author: Liu Zhiqiang(from Beihang University)
-// $Email: lzhq0930@gmail.com
+// $Email: lzhq0930@gmail.com(liuzhiqiang@buaa.edu.cn)
 // 
 // Geometric elements can be attached many kinds of properties.
 // I use dynamic array(i.e. std::vector) to store a specific property.

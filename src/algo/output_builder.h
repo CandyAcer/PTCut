@@ -1,6 +1,6 @@
 // $License: GPL-3.0
 // $Author: Liu Zhiqiang(from Beihang University)
-// $Email: lzhq0930@gmail.com
+// $Email: lzhq0930@gmail.com(liuzhiqiang@buaa.edu.cn)
 // 
 // Part 3 of PTCut, extract geometric elements belong to output polyhedral mesh.
 // 
