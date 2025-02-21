@@ -26,18 +26,18 @@
 #include "intersection_nodes.h"
 #include "predicates.h"
 
-namespace MCAL   // Mesh Cut Algorithm Libaray, ´æ·Å¶àÃæÌåÍø¸ñÇĞ¸îËã·¨µÄÊµÏÖ
+namespace MCAL   // Mesh Cut Algorithm Libaray, å­˜æ”¾å¤šé¢ä½“ç½‘æ ¼åˆ‡å‰²ç®—æ³•çš„å®ç°
 {
 
 /*
-* Corefine¸ºÔğ½«±íÃæÍø¸ñºÍ¶àÃæÌåÍø¸ñµÄÏà½»ÇøÓòÈı½Ç»¯, ²¢½«Èı½Ç»¯½á¹û×÷ÓÃÔÚÍø¸ñÖĞ.
-* Èı½Ç»¯ËùĞèĞÅÏ¢À´×ÔÓÚIntersection, Òò´Ë×÷ÎªËüµÄÊı¾İ³ÉÔ±(»òÕßËµVisitor), ÔÚÆäËã·¨¹ı³ÌÖĞËÑ¼¯Ïà¹ØĞÅÏ¢.
+* Corefineè´Ÿè´£å°†è¡¨é¢ç½‘æ ¼å’Œå¤šé¢ä½“ç½‘æ ¼çš„ç›¸äº¤åŒºåŸŸä¸‰è§’åŒ–, å¹¶å°†ä¸‰è§’åŒ–ç»“æœä½œç”¨åœ¨ç½‘æ ¼ä¸­.
+* ä¸‰è§’åŒ–æ‰€éœ€ä¿¡æ¯æ¥è‡ªäºIntersection, å› æ­¤ä½œä¸ºå®ƒçš„æ•°æ®æˆå‘˜(æˆ–è€…è¯´Visitor), åœ¨å…¶ç®—æ³•è¿‡ç¨‹ä¸­æœé›†ç›¸å…³ä¿¡æ¯.
 */
 template <typename SurfaceMesh,
-		  typename PolyhedralMesh,
-		  typename VPMSM,
-		  typename VPMPM,
-		  typename OutputBuilder>
+	  typename PolyhedralMesh,
+	  typename VPMSM,
+	  typename VPMPM,
+	  typename OutputBuilder>
 class Corefine
 {
 	// typedefs
@@ -81,27 +81,27 @@ class Corefine
 
 	// data members
 private:
-	// ÒÔÏÂÊÇÏ¸»¯ĞèÒªµÄÁ½ÀàĞÅÏ¢:
+	// ä»¥ä¸‹æ˜¯ç»†åŒ–éœ€è¦çš„ä¸¤ç±»ä¿¡æ¯:
 
-	// 1) corresponding information. ½»µãµ½µ×ÂäÔÚÊ²Ã´Î»ÖÃ, ×¢ÒâsmºÍpm¶¼¸÷×ÔÓĞÒ»·İ.
+	// 1) corresponding information. äº¤ç‚¹åˆ°åº•è½åœ¨ä»€ä¹ˆä½ç½®, æ³¨æ„små’Œpméƒ½å„è‡ªæœ‰ä¸€ä»½.
 
-	OnSMFace on_sm_face;  // ÂäÔÚsmÃæÄÚ²¿µÄ½»µã
-	OnSMEdge on_sm_edge;  // ÂäÔÚsm±ßÉÏµÄ½»µã
-	NodeToSMVertex node_id_to_sm_vertex;   // node idÓësm vertexµÄ¶ÔÓ¦¹ØÏµ
-	SMVertexToNode sm_vertex_to_node_id;   // sm vertexÓënode idµÄ¶ÔÓ¦¹ØÏµ
-	NodeToSMTarget node_to_sm_target_halfedge;  // ½»µãÓëÖ¸ÏòËüµÄ°ë±ß
+	OnSMFace on_sm_face;  // è½åœ¨smé¢å†…éƒ¨çš„äº¤ç‚¹
+	OnSMEdge on_sm_edge;  // è½åœ¨smè¾¹ä¸Šçš„äº¤ç‚¹
+	NodeToSMVertex node_id_to_sm_vertex;   // node idä¸sm vertexçš„å¯¹åº”å…³ç³»
+	SMVertexToNode sm_vertex_to_node_id;   // sm vertexä¸node idçš„å¯¹åº”å…³ç³»
+	NodeToSMTarget node_to_sm_target_halfedge;  // äº¤ç‚¹ä¸æŒ‡å‘å®ƒçš„åŠè¾¹
 
-	OnPMFace on_pm_face;  // ÂäÔÚpmÃæÄÚ²¿µÄ½»µã
-	OnPMEdge on_pm_edge;  // ÂäÔÚpm±ßÉÏµÄ½»µã
-	NodeToPMVertex node_id_to_pm_vertex;   // node idÓëpm vertexµÄ¶ÔÓ¦¹ØÏµ
-	PMVertexToNode pm_vertex_to_node_id;   // pm vertexÓënode idµÄ¶ÔÓ¦¹ØÏµ
-	NodeToPMTarget node_to_pm_target_halfedge;  // ½»µãÓëÖ¸ÏòËüµÄ°ë±ß
+	OnPMFace on_pm_face;  // è½åœ¨pmé¢å†…éƒ¨çš„äº¤ç‚¹
+	OnPMEdge on_pm_edge;  // è½åœ¨pmè¾¹ä¸Šçš„äº¤ç‚¹
+	NodeToPMVertex node_id_to_pm_vertex;   // node idä¸pm vertexçš„å¯¹åº”å…³ç³»
+	PMVertexToNode pm_vertex_to_node_id;   // pm vertexä¸node idçš„å¯¹åº”å…³ç³»
+	NodeToPMTarget node_to_pm_target_halfedge;  // äº¤ç‚¹ä¸æŒ‡å‘å®ƒçš„åŠè¾¹
 
-	// 2) adjacent information. ½»µãÖ®¼äµÄÁÚ½Ó¹ØÏµ.
+	// 2) adjacent information. äº¤ç‚¹ä¹‹é—´çš„é‚»æ¥å…³ç³».
 
-	// ´æ´¢Ò»¸ö½»µãµÄÏàÁÚ½»µã, Ò»¸öµãÓëÏàÁÚ½»µã¶ÔÓ¦Ò»Ìõ½»±ß, Èô¸ÉÌõ½»±ß¹¹³É½»Ïß.
+	// å­˜å‚¨ä¸€ä¸ªäº¤ç‚¹çš„ç›¸é‚»äº¤ç‚¹, ä¸€ä¸ªç‚¹ä¸ç›¸é‚»äº¤ç‚¹å¯¹åº”ä¸€æ¡äº¤è¾¹, è‹¥å¹²æ¡äº¤è¾¹æ„æˆäº¤çº¿.
 	std::vector<std::vector<NodeId>> graph_of_constraints;
-	// ±êÊ¶Ò»¸ö½»µãÊÇ·ñÖ»ÓĞÒ»¸öÁÚ¾Ó(½»Ïß²»±ÕºÏÊ±µÄ¶Ëµã).
+	// æ ‡è¯†ä¸€ä¸ªäº¤ç‚¹æ˜¯å¦åªæœ‰ä¸€ä¸ªé‚»å±…(äº¤çº¿ä¸é—­åˆæ—¶çš„ç«¯ç‚¹).
 	boost::dynamic_bitset<> is_node_of_degree_one;
 
 	OutputBuilder& output_builder;
@@ -109,7 +109,7 @@ private:
 public:
 	Corefine(OutputBuilder& ob) :output_builder(ob) {}
 
-	// µ±surface mesh edge Óë polyhedral mesh faceÏà½»Ê±, ¸ù¾İÏà½»ÀàĞÍ, ¼ÇÂ¼¶ÔÓ¦¹ØÏµ.
+	// å½“surface mesh edge ä¸ polyhedral mesh faceç›¸äº¤æ—¶, æ ¹æ®ç›¸äº¤ç±»å‹, è®°å½•å¯¹åº”å…³ç³».
 	void new_node_added_sepf(NodeId node_id,
 							 IntersectionType type,
 							 SMHalfedge h_sm,
@@ -119,23 +119,23 @@ public:
 							 bool is_source_coplanar,
 							 bool is_target_coplanar)
 	{
-		// Step1 ¼ÇÂ¼node idÓë¶àÃæÌåÍø¸ñface, edge, vertexµÄ¶ÔÓ¦¹ØÏµ.
-		// Note: ÊÇÒÔÎïÀíÃæ/ÎïÀí±ßÎªkey½øĞĞ¼ÇÂ¼µÄ.
+		// Step1 è®°å½•node idä¸å¤šé¢ä½“ç½‘æ ¼face, edge, vertexçš„å¯¹åº”å…³ç³».
+		// Note: æ˜¯ä»¥ç‰©ç†é¢/ç‰©ç†è¾¹ä¸ºkeyè¿›è¡Œè®°å½•çš„.
 		switch (type)
 		{
-		case ON_FACE: // µ±sm edge½»ÔÚpm faceµÄÄÚ²¿Ê±, Òª¼ÇÂ¼ÔÚon_pm_faceÖĞ.
+		case ON_FACE: // å½“sm edgeäº¤åœ¨pm faceçš„å†…éƒ¨æ—¶, è¦è®°å½•åœ¨on_pm_faceä¸­.
 		{
 			on_pm_face[pm.face(h_pm)].push_back(node_id);
 		}
 		break;
 
-		case ON_EDGE: // µ±sm edge½»ÔÚpm faceµÄÄ³Ìõ±ßÉÏÊ±, Òª¼ÇÂ¼ÔÚon_pm_edgeÖĞ.
+		case ON_EDGE: // å½“sm edgeäº¤åœ¨pm faceçš„æŸæ¡è¾¹ä¸Šæ—¶, è¦è®°å½•åœ¨on_pm_edgeä¸­.
 		{
 			on_pm_edge[pm.edge(h_pm)].push_back(node_id);
 		}
 		break;
 
-		case ON_VERTEX: // µ±sm edge½»ÔÚpm faceµÄÄ³¸ö¶¥µãÉÏÊ±, Òª¼ÇÂ¼vertexÓënode idµÄ¶ÔÓ¦¹ØÏµ.
+		case ON_VERTEX: // å½“sm edgeäº¤åœ¨pm faceçš„æŸä¸ªé¡¶ç‚¹ä¸Šæ—¶, è¦è®°å½•vertexä¸node idçš„å¯¹åº”å…³ç³».
 		{
 			node_to_pm_target_halfedge.insert(std::make_pair(node_id, h_pm));
 			if (node_id_to_pm_vertex.size() <= node_id)
@@ -145,7 +145,7 @@ public:
 				pm_vertex_to_node_id.insert(std::make_pair(pm.target(h_pm), node_id)).second;
 			assert(insert_ok || pm_vertex_to_node_id[pm.target(h_pm)] == node_id);
 
-			// ×¢Òâ, ´ËÊ±½»µã¶ÔÓ¦µÄvertexÔÚ¶àÃæÌåÍø¸ñÖĞ»¹Ã»ÓĞ, ÒªÔÚÈı½Ç»¯µÄ¹ı³ÌÖĞÖğ²½´´½¨²¢ÓÉ¸Ãº¯Êı¼ÇÂ¼.
+			// æ³¨æ„, æ­¤æ—¶äº¤ç‚¹å¯¹åº”çš„vertexåœ¨å¤šé¢ä½“ç½‘æ ¼ä¸­è¿˜æ²¡æœ‰, è¦åœ¨ä¸‰è§’åŒ–çš„è¿‡ç¨‹ä¸­é€æ­¥åˆ›å»ºå¹¶ç”±è¯¥å‡½æ•°è®°å½•.
 			output_builder.set_pm_vertex_id(pm.target(h_pm), node_id);
 		}
 		break;
@@ -154,7 +154,7 @@ public:
 			return;
 		}
 
-		// Step2 ¼ÇÂ¼node idÓë±íÃæÍø¸ñface, edge, vertexµÄ¶ÔÓ¦¹ØÏµ.
+		// Step2 è®°å½•node idä¸è¡¨é¢ç½‘æ ¼face, edge, vertexçš„å¯¹åº”å…³ç³».
 		assert(!is_source_coplanar || !is_target_coplanar);
 
 		if (is_target_coplanar)
@@ -182,11 +182,11 @@ public:
 
 			output_builder.set_sm_vertex_id(source(h_sm, sm), node_id);
 		}
-		else // ½»µãÂäÔÚsm edgeÉÏ.
+		else // äº¤ç‚¹è½åœ¨sm edgeä¸Š.
 			on_sm_edge[edge(h_sm, sm)].push_back(node_id);
 	}
 
-	// µ±polyhedral mesh edge Óë surface mesh faceÏà½»Ê±, ¸ù¾İÏà½»ÀàĞÍ, ¼ÇÂ¼¶ÔÓ¦¹ØÏµ.
+	// å½“polyhedral mesh edge ä¸ surface mesh faceç›¸äº¤æ—¶, æ ¹æ®ç›¸äº¤ç±»å‹, è®°å½•å¯¹åº”å…³ç³».
 	void new_node_added_pesf(NodeId node_id,
 							 IntersectionType type,
 							 PMHalfedge h_pm,
@@ -259,7 +259,7 @@ public:
 			on_pm_edge[pm.edge(h_pm)].push_back(node_id);
 	}
 
-	// ÊÕ¼¯ÁÚ½ÓĞÅÏ¢, ¼òµ¥¸´ÖÆ¼´¿É.
+	// æ”¶é›†é‚»æ¥ä¿¡æ¯, ç®€å•å¤åˆ¶å³å¯.
 	template <typename Neighbors>
 	void annotate_graph(std::vector<Neighbors>& node_neighbors)
 	{
@@ -294,10 +294,10 @@ public:
 		output_builder.add_node_to_polyline(c, i);
 	}
 
-	// Ò»¸ösm faceµÄ±ß½çĞÅÏ¢, °üº¬Èı¸ö¶¥µã, ÈıÌõ°ë±ßÒÔ¼°Ã¿Ìõ°ë±ßÉÏµÄ½»µã.
-	// split_halfedges()µÄÊ±ºò½«ÕâĞ©ĞÅÏ¢ÊÕ¼¯ÆğÀ´, ºÍon_sm_faceÒ»²¢½»¸øCDT, ÊµÏÖ¶ÔÒ»¸öÃæµÄÈı½Ç»¯.
-	// SMFaceBoundaryÊÇ±ß½çĞÅÏ¢, on_sm_faceÊÇÃæÄÚ²¿µÄĞÅÏ¢, graph_of_constraintsÊÇ½»±ßĞÅÏ¢,
-	// ÈıÕß¼ÇÂ¼ÁËÈı½Ç»¯Ò»¸öÃæËùĞèµÄÈ«²¿ĞÅÏ¢.
+	// ä¸€ä¸ªsm faceçš„è¾¹ç•Œä¿¡æ¯, åŒ…å«ä¸‰ä¸ªé¡¶ç‚¹, ä¸‰æ¡åŠè¾¹ä»¥åŠæ¯æ¡åŠè¾¹ä¸Šçš„äº¤ç‚¹.
+	// split_halfedges()çš„æ—¶å€™å°†è¿™äº›ä¿¡æ¯æ”¶é›†èµ·æ¥, å’Œon_sm_faceä¸€å¹¶äº¤ç»™CDT, å®ç°å¯¹ä¸€ä¸ªé¢çš„ä¸‰è§’åŒ–.
+	// SMFaceBoundaryæ˜¯è¾¹ç•Œä¿¡æ¯, on_sm_faceæ˜¯é¢å†…éƒ¨çš„ä¿¡æ¯, graph_of_constraintsæ˜¯äº¤è¾¹ä¿¡æ¯,
+	// ä¸‰è€…è®°å½•äº†ä¸‰è§’åŒ–ä¸€ä¸ªé¢æ‰€éœ€çš„å…¨éƒ¨ä¿¡æ¯.
 	struct SMFaceBoundary
 	{
 		SMVertex                    vertices[3]; // the three vertices of the original face.
@@ -305,16 +305,16 @@ public:
 		std::map<SMHalfedge, int>   hedge_id_map; // map a halfedge to an index.
 		std::vector<NodeId>	        ids_on_edge[3]; // the node_ids on each halfedge.
 
-		// ¶ÔÓ¦¹ØÏµ
-		// (splitÇ°):
+		// å¯¹åº”å…³ç³»
+		// (splitå‰):
 		// vertices[0,1]-->halfedges[0]-->ids_on_edge[0]
 		// vertices[1,2]-->halfedges[1]-->ids_on_edge[1]
 		// vertices[2,0]-->halfedges[2]-->ids_on_edge[2]
 		// 
-		// (splitºó):
-		// halfedges[0]µÄtargetÊÇvertices[1], µ«source²»ÊÇvertices[0]
-		// halfedges[1]µÄtargetÊÇvertices[2], µ«source²»ÊÇvertices[1]
-		// halfedges[2]µÄtargetÊÇvertices[0], µ«source²»ÊÇvertices[2]
+		// (splitå):
+		// halfedges[0]çš„targetæ˜¯vertices[1], ä½†sourceä¸æ˜¯vertices[0]
+		// halfedges[1]çš„targetæ˜¯vertices[2], ä½†sourceä¸æ˜¯vertices[1]
+		// halfedges[2]çš„targetæ˜¯vertices[0], ä½†sourceä¸æ˜¯vertices[2]
 		//
 
 		SMFaceBoundary(SMHalfedge first, SurfaceMesh& sm)
@@ -333,8 +333,8 @@ public:
 			hedge_id_map.insert(std::make_pair(halfedges[2], 2));
 		}
 
-		// µ±halfedge¶ÔÓ¦µÄSMFaceBoundary´æÔÚÇÒhalfedgeµÄĞÖµÜ°ë±ß±»splitµÄÊ±ºò, ĞèÒª¸üĞÂ°ë±ß.
-		// ¸üĞÂºóhalfedge±ä¶ÌÁË, µ«ids_on_edgeÉÏµÄ½»µãÈÔÈ»ÊÇÎ´ÇĞ·ÖÇ°µÄ³¤±ß, ÓĞÒ»ÖÖ²»¶ÔÓ¦µÄ¸Ğ¾õ.
+		// å½“halfedgeå¯¹åº”çš„SMFaceBoundaryå­˜åœ¨ä¸”halfedgeçš„å…„å¼ŸåŠè¾¹è¢«splitçš„æ—¶å€™, éœ€è¦æ›´æ–°åŠè¾¹.
+		// æ›´æ–°åhalfedgeå˜çŸ­äº†, ä½†ids_on_edgeä¸Šçš„äº¤ç‚¹ä»ç„¶æ˜¯æœªåˆ‡åˆ†å‰çš„é•¿è¾¹, æœ‰ä¸€ç§ä¸å¯¹åº”çš„æ„Ÿè§‰.
 		void update_original_halfedge(SMHalfedge original_halfedge,
 									  SMHalfedge new_halfedge,
 									  SurfaceMesh& sm)
@@ -349,7 +349,7 @@ public:
 			halfedges[idx] = new_halfedge;
 		}
 
-		// ½«on_sm_edgeµÄ½»µã¿½±´µ½¶ÔÓ¦µÄ°ë±ßÉÏ.
+		// å°†on_sm_edgeçš„äº¤ç‚¹æ‹·è´åˆ°å¯¹åº”çš„åŠè¾¹ä¸Š.
 		template <typename Iterator>
 		void copy_ids_on_edge(SMHalfedge h, Iterator begin, Iterator end)
 		{
@@ -361,8 +361,8 @@ public:
 	};
 	typedef std::unordered_map<SMFace, SMFaceBoundary> SMFaceBoundaries;
 
-	// ¶Ôh_splitÉÏµÄµã½øĞĞÅÅĞò, °´´ÓÔ¶µ½½üÅÅĞò.
-	// ¼´ÅÅĞòºóids_on_edgeÖĞË÷ÒıÔ½Ğ¡µÄµãÀëtarget(h_split, sm)Ô½Ô¶.
+	// å¯¹h_splitä¸Šçš„ç‚¹è¿›è¡Œæ’åº, æŒ‰ä»è¿œåˆ°è¿‘æ’åº.
+	// å³æ’åºåids_on_edgeä¸­ç´¢å¼•è¶Šå°çš„ç‚¹ç¦»target(h_split, sm)è¶Šè¿œ.
 	void sort_vertices_along_sm_halfedge(NodeIdVec& ids_on_edge,
 										 SMHalfedge h_split,
 										 SurfaceMesh& sm,
@@ -382,8 +382,8 @@ public:
 							INodes& nodes,
 							SMFaceBoundaries& sm_face_boundaries)
 	{
-		// ±éÀúËùÓĞÏà½»µÄsm edge, ½«Æä´ò¶Ï, ¼ÓÈëĞÂµã, Î¬»¤ºÃÍØÆË.
-		// Note: splitºóÓĞĞ©Èı½ÇĞÎÊÇ¶àÌõ°ë±ßÎ§³ÉµÄ, ²»ÔÙÊÇÈı½ÇĞÎ.
+		// éå†æ‰€æœ‰ç›¸äº¤çš„sm edge, å°†å…¶æ‰“æ–­, åŠ å…¥æ–°ç‚¹, ç»´æŠ¤å¥½æ‹“æ‰‘.
+		// Note: splitåæœ‰äº›ä¸‰è§’å½¢æ˜¯å¤šæ¡åŠè¾¹å›´æˆçš„, ä¸å†æ˜¯ä¸‰è§’å½¢.
 		for (typename OnSMEdge::iterator it = on_sm_edge.begin();
 										 it != on_sm_edge.end();
 										 ++it)
@@ -391,12 +391,12 @@ public:
 			SMHalfedge h_split = halfedge(it->first, sm); // the edge to be splited.
 			NodeIdVec& ids_on_edge = it->second; // node ids to be inserted.
 
-			// È·±£ids_on_edgeÖĞÃ»ÓĞÖØ¸´µÄnode_id
+			// ç¡®ä¿ids_on_edgeä¸­æ²¡æœ‰é‡å¤çš„node_id
 			assert(std::set<NodeId>(ids_on_edge.begin(), ids_on_edge.end()).size() == ids_on_edge.size());
 
 			sort_vertices_along_sm_halfedge(ids_on_edge, h_split, sm, vpm_sm, nodes);
 
-			// ±£´æh_splitËùÔÚfaceÔ­Ê¼µÄĞÅÏ¢, ½«ids_on_edge¿½±´µ½¶ÔÓ¦µÄface boundaryÖĞ.
+			// ä¿å­˜h_splitæ‰€åœ¨faceåŸå§‹çš„ä¿¡æ¯, å°†ids_on_edgeæ‹·è´åˆ°å¯¹åº”çš„face boundaryä¸­.
 			if (!is_border(h_split, sm))
 			{
 				SMFace f = face(h_split, sm);
@@ -410,7 +410,7 @@ public:
 				it_face->second.copy_ids_on_edge(h_split, ids_on_edge.begin(), ids_on_edge.end());
 			}
 
-			// ±£´æh_splitĞÖµÜ°ë±ßËùÔÚfaceÔ­Ê¼µÄĞÅÏ¢, ÈçÉÏ.
+			// ä¿å­˜h_splitå…„å¼ŸåŠè¾¹æ‰€åœ¨faceåŸå§‹çš„ä¿¡æ¯, å¦‚ä¸Š.
 			SMHalfedge opp_h_split = opposite(h_split, sm);
 			typename SMFaceBoundaries::iterator it_opp_face = sm_face_boundaries.end();
 			if (!is_border(opp_h_split, sm))
@@ -422,7 +422,7 @@ public:
 					SMFaceBoundary opp_face_bound(opp_h_split, sm);
 					it_opp_face = sm_face_boundaries.insert(std::make_pair(opp_face, opp_face_bound)).first;
 				}
-				// ×¢Òâ, ĞÖµÜ°ë±ßĞèÒªÄæĞò.
+				// æ³¨æ„, å…„å¼ŸåŠè¾¹éœ€è¦é€†åº.
 				it_opp_face->second.copy_ids_on_edge(opp_h_split, ids_on_edge.rbegin(), ids_on_edge.rend());
 			}
 
@@ -435,7 +435,7 @@ public:
 			// insert intersection nodes consecutively.
 			for (NodeId node_id : ids_on_edge)
 			{
-				// ²åÈëĞÂ±ßºÍĞÂµã, ²¢µ÷ÕûºÃÍØÆË, ´ËÊ±ÒÑ¾­×÷ÓÃÔÚÁËsurface meshÉÏ.
+				// æ’å…¥æ–°è¾¹å’Œæ–°ç‚¹, å¹¶è°ƒæ•´å¥½æ‹“æ‰‘, æ­¤æ—¶å·²ç»ä½œç”¨åœ¨äº†surface meshä¸Š.
 				SMHalfedge hnew = CGAL::Euler::split_edge(h_split, sm);
 				assert(expected_src == source(hnew, sm));
 				SMVertex vnew = target(hnew, sm);
@@ -454,11 +454,11 @@ public:
 			assert(target(h_incident_to_src, sm) == original_srcv);
 			assert(face(h_incident_to_src, sm) == face(opp_h_split, sm));
 
-			// ¼ÙÉèopp_h_split¶ÔÓ¦face boundaryÖĞµÄvertices[0,1]
-			// µ±h_splitÉÏ²åÈëÈô¸É½»µãºó, opp_h_splitµÄsourceÒÀÈ»ÊÇvertices[0], ¶øtarget²»ÊÇvertices[1],
-			// ¶øÇĞ¸îºó¶ÔÓ¦¹æÔòÊÇ: opp_h_splitµÄsource²»ÊÇvertices[0], ¶øtargetÒÀÈ»ÊÇvertices[1], 
-			// ÎÒÃÇÔÚsplitµÄÊ±ºòÓÃh_incident_to_src±£´æÁËÏëÒªµÄÄÇÌõ°ë±ß, 
-			// ËùÒÔopp_h_split¶ÔÓ¦µÄface boundaryÒÑ¾­´æÔÚÊ±, Ó¦µ±¸üĞÂÎªh_incident_to_src, ·ñÔò»áÓ°ÏìÏÂÒ»²½µÄÈı½Ç»¯.
+			// å‡è®¾opp_h_splitå¯¹åº”face boundaryä¸­çš„vertices[0,1]
+			// å½“h_splitä¸Šæ’å…¥è‹¥å¹²äº¤ç‚¹å, opp_h_splitçš„sourceä¾ç„¶æ˜¯vertices[0], è€Œtargetä¸æ˜¯vertices[1],
+			// è€Œåˆ‡å‰²åå¯¹åº”è§„åˆ™æ˜¯: opp_h_splitçš„sourceä¸æ˜¯vertices[0], è€Œtargetä¾ç„¶æ˜¯vertices[1], 
+			// æˆ‘ä»¬åœ¨splitçš„æ—¶å€™ç”¨h_incident_to_srcä¿å­˜äº†æƒ³è¦çš„é‚£æ¡åŠè¾¹, 
+			// æ‰€ä»¥opp_h_splitå¯¹åº”çš„face boundaryå·²ç»å­˜åœ¨æ—¶, åº”å½“æ›´æ–°ä¸ºh_incident_to_src, å¦åˆ™ä¼šå½±å“ä¸‹ä¸€æ­¥çš„ä¸‰è§’åŒ–.
 			//
 			if (!is_border(opp_h_split, sm))
 			{
@@ -467,8 +467,8 @@ public:
 					opp_h_split, h_incident_to_src, sm);
 			}
 
-			// Ö®Ç°µÄ²½ÖèÖĞ, on_sm_face¼ÇÂ¼µÄÃæÖ»ÓĞÓĞÄÚ²¿µÄ½»µã, µ«Ò²ÓĞĞ©ÃæÖ»ÓĞ±ßÉÏÓĞ½»µã,
-			// ½«Ã»ÓĞÄÚ²¿½»µãµÄÃæ²åÈëon_sm_face, ±£Ö¤ËùÓĞÏà½»µÄÃæ¶¼±»Èı½Ç»¯.
+			// ä¹‹å‰çš„æ­¥éª¤ä¸­, on_sm_faceè®°å½•çš„é¢åªæœ‰æœ‰å†…éƒ¨çš„äº¤ç‚¹, ä½†ä¹Ÿæœ‰äº›é¢åªæœ‰è¾¹ä¸Šæœ‰äº¤ç‚¹,
+			// å°†æ²¡æœ‰å†…éƒ¨äº¤ç‚¹çš„é¢æ’å…¥on_sm_face, ä¿è¯æ‰€æœ‰ç›¸äº¤çš„é¢éƒ½è¢«ä¸‰è§’åŒ–.
 			if (!is_border(h_split, sm))
 				on_sm_face[face(h_split, sm)];
 			if (!is_border(opp_h_split, sm))
@@ -529,8 +529,8 @@ public:
 	};
 	typedef std::unordered_map<PMFace, PMFaceBoundary> PMFaceBoundaries;
 
-	// ¶Ôh_splitÉÏµÄµã½øĞĞÅÅĞò, °´´ÓÔ¶µ½½üÅÅĞò.
-	// ¼´ÅÅĞòºóids_on_edgeÖĞË÷ÒıÔ½Ğ¡µÄµãÀëpm.target(h_split)Ô½Ô¶.
+	// å¯¹h_splitä¸Šçš„ç‚¹è¿›è¡Œæ’åº, æŒ‰ä»è¿œåˆ°è¿‘æ’åº.
+	// å³æ’åºåids_on_edgeä¸­ç´¢å¼•è¶Šå°çš„ç‚¹ç¦»pm.target(h_split)è¶Šè¿œ.
 	void sort_vertices_along_pm_halfedge(NodeIdVec& ids_on_edge,
 										 PMHalfedge h_split,
 										 PolyhedralMesh& pm,
@@ -545,8 +545,8 @@ public:
 
 	// split every intersected edge in polyhedral mesh.
 	// 
-	// Note: Óësplit_sm_halfedges()²»Í¬, split_pm_halfedges()²¢²»´ò¶Ï±ß, Ò²²»µ÷ÕûÍØÆË.
-	// ±¾º¯Êı½áÊøºó¶àÃæÌåÍø¸ñµÄÍØÆËÃ»ÓĞÈÎºÎ¸Ä±ä, ÎÒÃÇÖ»ÊÇÊÕ¼¯ĞÂ±ßÓëÆä¶ËµãµÈĞÅÏ¢.
+	// Note: ä¸split_sm_halfedges()ä¸åŒ, split_pm_halfedges()å¹¶ä¸æ‰“æ–­è¾¹, ä¹Ÿä¸è°ƒæ•´æ‹“æ‰‘.
+	// æœ¬å‡½æ•°ç»“æŸåå¤šé¢ä½“ç½‘æ ¼çš„æ‹“æ‰‘æ²¡æœ‰ä»»ä½•æ”¹å˜, æˆ‘ä»¬åªæ˜¯æ”¶é›†æ–°è¾¹ä¸å…¶ç«¯ç‚¹ç­‰ä¿¡æ¯.
 	//
 	void split_pm_halfedges(OnPMEdge& on_pm_edge,
 							PolyhedralMesh& pm,
@@ -561,7 +561,7 @@ public:
 			PMEdge e_split = it->first;
 			NodeIdVec& ids_on_edge = it->second;
 
-			// È·±£ids_on_edgeÖĞÃ»ÓĞÖØ¸´µÄnode_id.
+			// ç¡®ä¿ids_on_edgeä¸­æ²¡æœ‰é‡å¤çš„node_id.
 			assert(std::set<NodeId>(ids_on_edge.begin(), ids_on_edge.end()).size() == ids_on_edge.size());
 
 			PMHalfedge h_split = pm.halfedge(e_split);
@@ -620,7 +620,7 @@ public:
 				pre_vertex = vnew;
 			}
 
-			// È·±£Ã»ÓĞĞŞ¸ÄÔ­À´µÄÍØÆË.
+			// ç¡®ä¿æ²¡æœ‰ä¿®æ”¹åŸæ¥çš„æ‹“æ‰‘.
 			assert(pm.source(h_split) == original_srcv);
 			assert(pm.target(h_split) == original_tgtv);
 
@@ -646,12 +646,12 @@ public:
 		assert(cdt.is_infinite(fh));
 		int fi = fh->index(cdt.infinite_vertex());
 		typename CDT::Vertex_handle vh = cdt.insert(p, CDT::EDGE, fh, fi);
-		// ÕÒµ½infinite_edge, ¼´Á½¸ö¶Ëµã·Ö±ğÎª²åÈëµãºÍinfinite_vertexµÄ±ß
+		// æ‰¾åˆ°infinite_edge, å³ä¸¤ä¸ªç«¯ç‚¹åˆ†åˆ«ä¸ºæ’å…¥ç‚¹å’Œinfinite_vertexçš„è¾¹
 		typename CDT::Edge_circulator ec = cdt.incident_edges(vh);
 		while (ec->first->vertex(CDT::ccw(ec->second)) != cdt.infinite_vertex())
 			++ec;
 
-		// ¸üĞÂfh
+		// æ›´æ–°fh
 		fh = ec->first->neighbor(ec->second);
 		assert(cdt.is_valid());
 		return vh;
@@ -662,10 +662,10 @@ public:
 								  std::map<NodeId, CDT_Vertex_handle>& id_to_CDT_vh,
 								  std::vector<std::pair<NodeId, NodeId>>& constrained_edges)
 	{
-		// ¶ÔÓÚnode_idsÖĞµÄid, ÕÒµ½ËüµÄËùÓĞÁÚ¾Ó, ËüÃÇÁ½¸ö¹¹³ÉÒ»Ìõ½»±ß(Ô¼Êø±ß), µ«ÎÒÃÇÖ»ÒªÄÇĞ©ÔÚÏ¸»¯ÃæÉÏµÄÁÚ¾Ó,
-		// ÔõÃ´ÅĞ¶ÏÄØ? 
-		// Ç°ÃæµÄ²½ÖèÖĞ, id_to_CDT_vhÒÑ¾­°ÑÏ¸»¯ÃæÉÏµÄËùÓĞµã¶¼¼ÇÂ¼ÔÚ°¸ÁË, Ö»ÒªÄÜ²éµ½, ¾ÍÔÚÃæÉÏ.
-		// ´Ë´¦Ò²½âÊÍÁËÎªÊ²Ã´ÎÒÃÇ²»ÔÚÒâidµÄÁÚ¾Ó´óÓÚÁ½¸ö, ÒòÎª²»Ó°Ïì´úÂëµÄÂß¼­.
+		// å¯¹äºnode_idsä¸­çš„id, æ‰¾åˆ°å®ƒçš„æ‰€æœ‰é‚»å±…, å®ƒä»¬ä¸¤ä¸ªæ„æˆä¸€æ¡äº¤è¾¹(çº¦æŸè¾¹), ä½†æˆ‘ä»¬åªè¦é‚£äº›åœ¨ç»†åŒ–é¢ä¸Šçš„é‚»å±…,
+		// æ€ä¹ˆåˆ¤æ–­å‘¢? 
+		// å‰é¢çš„æ­¥éª¤ä¸­, id_to_CDT_vhå·²ç»æŠŠç»†åŒ–é¢ä¸Šçš„æ‰€æœ‰ç‚¹éƒ½è®°å½•åœ¨æ¡ˆäº†, åªè¦èƒ½æŸ¥åˆ°, å°±åœ¨é¢ä¸Š.
+		// æ­¤å¤„ä¹Ÿè§£é‡Šäº†ä¸ºä»€ä¹ˆæˆ‘ä»¬ä¸åœ¨æ„idçš„é‚»å±…å¤§äºä¸¤ä¸ª, å› ä¸ºä¸å½±å“ä»£ç çš„é€»è¾‘.
 		for (NodeId id : node_ids)
 		{
 			assert(id < graph_of_constraints.size());
@@ -678,10 +678,10 @@ public:
 					typename std::map<NodeId, CDT_Vertex_handle>::iterator it_vh
 						= id_to_CDT_vh.find(id_neighbor);
 
-					// ±£Ö¤ÔÚÍ¬Ò»¸öÈı½ÇÃæÄÚ, Èı½ÇÃæÄÚµÄCDT_Vertex_handle¶¼ÔÚid_to_CDT_vhÖĞ, ²»¿ÉÄÜÕÒ²»µ½.
+					// ä¿è¯åœ¨åŒä¸€ä¸ªä¸‰è§’é¢å†…, ä¸‰è§’é¢å†…çš„CDT_Vertex_handleéƒ½åœ¨id_to_CDT_vhä¸­, ä¸å¯èƒ½æ‰¾ä¸åˆ°.
 					if (it_vh != id_to_CDT_vh.end())
 					{
-						cdt.insert_constraint(vh, it_vh->second); // ²åÈëÔ¼Êø±ß.
+						cdt.insert_constraint(vh, it_vh->second); // æ’å…¥çº¦æŸè¾¹.
 						constrained_edges.push_back(std::make_pair(id, id_neighbor));
 						constrained_edges.push_back(std::make_pair(id_neighbor, id));
 					}
@@ -702,7 +702,7 @@ public:
 		}
 	}
 
-	// ½«CDTÏ¸»¯µÄ½á¹ûµ¼Èëµ½±íÃæÍø¸ñµÄÃæÉÏ.
+	// å°†CDTç»†åŒ–çš„ç»“æœå¯¼å…¥åˆ°è¡¨é¢ç½‘æ ¼çš„é¢ä¸Š.
 	void import_cdt_to_sm_face(SMFace current_face,
 							   CDT& cdt,
 							   std::vector<NodeId>& ids_in_face,
@@ -713,9 +713,9 @@ public:
 	{
 		assert(ids_in_face.size() == std::set<NodeId>(ids_in_face.begin(), ids_in_face.end()).size());
 
-		// 1) ²åÈëÄÚ²¿µã.
+		// 1) æ’å…¥å†…éƒ¨ç‚¹.
 		// 
-		// Èı½ÇĞÎ±ßÉÏµÄµãÒÑ¾­Ìí¼Óµ½±íÃæÍø¸ñÖĞÁË, µ«ÃæÄÚ²¿µÄµã»¹Ã»ÓĞ²åÈë, ½«ÆäÌí¼Óµ½±íÃæÍø¸ñÉÏ.
+		// ä¸‰è§’å½¢è¾¹ä¸Šçš„ç‚¹å·²ç»æ·»åŠ åˆ°è¡¨é¢ç½‘æ ¼ä¸­äº†, ä½†é¢å†…éƒ¨çš„ç‚¹è¿˜æ²¡æœ‰æ’å…¥, å°†å…¶æ·»åŠ åˆ°è¡¨é¢ç½‘æ ¼ä¸Š.
 		// insert the intersection point interior to the face inside the mesh
 		// and save their vertex_descriptor.
 		for (NodeId node_id : ids_in_face)
@@ -728,7 +728,7 @@ public:
 			node_id_to_sm_vertex[node_id] = v;
 		}
 
-		// 2) ²åÈë±ß²¢µ÷ÕûÍØÆË(²¢Ã»ÓĞÈ«²¿µ÷ÕûºÃ, ÒòÎª»¹Ã»add_face, Ö»ÄÜÉèÖÃÖ¸ÏòµÄvertex).
+		// 2) æ’å…¥è¾¹å¹¶è°ƒæ•´æ‹“æ‰‘(å¹¶æ²¡æœ‰å…¨éƒ¨è°ƒæ•´å¥½, å› ä¸ºè¿˜æ²¡add_face, åªèƒ½è®¾ç½®æŒ‡å‘çš„vertex).
 		// 
 		// insert the new halfedge and set their incident vertex.
 		for (typename CDT::Finite_edges_iterator it = cdt.finite_edges_begin();
@@ -738,7 +738,7 @@ public:
 			typename CDT::Vertex_handle cdt_v0 = it->first->vertex(cdt.ccw(it->second));
 			typename CDT::Vertex_handle cdt_v1 = it->first->vertex(cdt.cw(it->second));
 
-			// Èı½ÇĞÎµÄ±ßÒÑ¾­ÔÚsplit_halfedges()µÄÊ±ºò¶¼µ÷ÕûºÃÁË, Ìø¹ı.
+			// ä¸‰è§’å½¢çš„è¾¹å·²ç»åœ¨split_halfedges()çš„æ—¶å€™éƒ½è°ƒæ•´å¥½äº†, è·³è¿‡.
 			// grab edges that are not on the convex hull (these have already been created).
 			if (!cdt.is_infinite(it->first->vertex(it->second)) &&
 				!cdt.is_infinite(cdt.mirror_vertex(it->first, it->second)))
@@ -763,11 +763,11 @@ public:
 			}
 		}
 
-		// 3) Ìí¼ÓÃæ²¢µ÷ÕûºÃÍØÆË. ×¢ÒâÔ­À´µÄÃæÒª¸´ÓÃ, ²»»áÉ¾³ı.
+		// 3) æ·»åŠ é¢å¹¶è°ƒæ•´å¥½æ‹“æ‰‘. æ³¨æ„åŸæ¥çš„é¢è¦å¤ç”¨, ä¸ä¼šåˆ é™¤.
 		for (typename CDT::Finite_faces_iterator it = cdt.finite_faces_begin(),
 				it_end = cdt.finite_faces_end();;)
 		{
-			// CDTµÄÃæµÄÈı¸ö¶¥µã»á±àºÅÎª012, ÊÇÄæÊ±ÕëË³Ğò.
+			// CDTçš„é¢çš„ä¸‰ä¸ªé¡¶ç‚¹ä¼šç¼–å·ä¸º012, æ˜¯é€†æ—¶é’ˆé¡ºåº.
 			typename CDT::Vertex_handle cdt_v0 = it->vertex(0);
 			typename CDT::Vertex_handle cdt_v1 = it->vertex(1);
 			typename CDT::Vertex_handle cdt_v2 = it->vertex(2);
@@ -807,7 +807,7 @@ public:
 		}
 	}
 
-	// ½«ËùÓĞÏà½»µÄÃæÈı½Ç»¯.
+	// å°†æ‰€æœ‰ç›¸äº¤çš„é¢ä¸‰è§’åŒ–.
 	void triangulate_sm_intersected_faces(OnSMFace& on_sm_face,
 										  SurfaceMesh& sm,
 										  VPMSM& vpm_sm,
@@ -816,7 +816,7 @@ public:
 	{
 		const std::size_t nb_nodes = nodes.size();
 
-		// ±éÀúËùÓĞµÄsm face, ½«ÆäÈı½Ç»¯.
+		// éå†æ‰€æœ‰çš„sm face, å°†å…¶ä¸‰è§’åŒ–.
 		for (typename OnSMFace::iterator it = on_sm_face.begin();
 										 it != on_sm_face.end();
 										 ++it)
@@ -826,22 +826,22 @@ public:
 
 			std::map<NodeId, CDT_Vertex_handle> id_to_CDT_vh;
 			std::map<std::pair<NodeId, NodeId>, SMHalfedge> edge_to_halfedge;
-			std::array<SMVertex, 3> f_vertices; // fµÄÈı¸ö¶¥µã.
+			std::array<SMVertex, 3> f_vertices; // fçš„ä¸‰ä¸ªé¡¶ç‚¹.
 			std::array<NodeId, 3> f_indices = { nb_nodes, nb_nodes + 1, nb_nodes + 2 };
 
-			// Step1 CDTÈı½Ç»¯.
+			// Step1 CDTä¸‰è§’åŒ–.
 			// Note: 
-			// CDT¶ÔÓÚÃæ/±ß/¶¥µãÓĞ×Ô¼ºµÄÒ»Ì×±íÊ¾, ¼´Face_handle/Vertex_handle.
-			// Vertex_handleµÄÄ£°å²ÎÊıÓĞÒ»¸öInfo, ´Ë´¦ÎÒÃÇÊ¹ÓÃNodeId.
+			// CDTå¯¹äºé¢/è¾¹/é¡¶ç‚¹æœ‰è‡ªå·±çš„ä¸€å¥—è¡¨ç¤º, å³Face_handle/Vertex_handle.
+			// Vertex_handleçš„æ¨¡æ¿å‚æ•°æœ‰ä¸€ä¸ªInfo, æ­¤å¤„æˆ‘ä»¬ä½¿ç”¨NodeId.
 			// 
-			// CDTµÄ´óÖÂÁ÷³ÌÎª: ÏÈ²åÈëÈı½ÇĞÎÈı¸ö¶¥µã, ÔÙ²åÈë±ßÉÏºÍÃæÄÚ²¿µÄµã, Õâ¸ö¹ı³ÌÊÇDelaunayÈı½Ç»¯, 
-			//                 ×îºó²åÈëÔ¼Êø±ß, Ëã·¨»á´ò¶ÏÓëÔ¼Êø±ßÏà½»µÄ±ß, ĞÎ³ÉÁ½¸ö¶à±ßĞÎ, ÔÙ¸÷×ÔÈı½Ç»¯.
+			// CDTçš„å¤§è‡´æµç¨‹ä¸º: å…ˆæ’å…¥ä¸‰è§’å½¢ä¸‰ä¸ªé¡¶ç‚¹, å†æ’å…¥è¾¹ä¸Šå’Œé¢å†…éƒ¨çš„ç‚¹, è¿™ä¸ªè¿‡ç¨‹æ˜¯Delaunayä¸‰è§’åŒ–, 
+			//                 æœ€åæ’å…¥çº¦æŸè¾¹, ç®—æ³•ä¼šæ‰“æ–­ä¸çº¦æŸè¾¹ç›¸äº¤çš„è¾¹, å½¢æˆä¸¤ä¸ªå¤šè¾¹å½¢, å†å„è‡ªä¸‰è§’åŒ–.
 			// 
-			// Èı½Ç»¯ºó¿ÉÒÔÀûÓÃCDTµÄiteratorÈ¡µ½Èı½Ç»¯ºóµÄËùÓĞ±ßºÍÃæ.
+			// ä¸‰è§’åŒ–åå¯ä»¥åˆ©ç”¨CDTçš„iteratorå–åˆ°ä¸‰è§’åŒ–åçš„æ‰€æœ‰è¾¹å’Œé¢.
 			// 
-			// ¿ÉÒÔ½«CDTÊÓÎªÒ»¸öºÚºĞ, ÎÒÃÇĞèÒª×öµÄÊÇ½¨Á¢½»µãnode idÓëCDT_Vertex_handleµÄ¶ÔÓ¦¹ØÏµ, 
+			// å¯ä»¥å°†CDTè§†ä¸ºä¸€ä¸ªé»‘ç›’, æˆ‘ä»¬éœ€è¦åšçš„æ˜¯å»ºç«‹äº¤ç‚¹node idä¸CDT_Vertex_handleçš„å¯¹åº”å…³ç³», 
 
-			// 1.1) ²åÈëÔ­Ê¼µÄÈı¸ö¶¥µã.
+			// 1.1) æ’å…¥åŸå§‹çš„ä¸‰ä¸ªé¡¶ç‚¹.
 			typename SMFaceBoundaries::iterator it_fb = sm_face_boundaries.find(f);
 			if (it_fb != sm_face_boundaries.end())
 			{
@@ -867,7 +867,7 @@ public:
 
 			if (CGAL::collinear(get(vpm_sm, f_vertices[0]), get(vpm_sm, f_vertices[1]), get(vpm_sm, f_vertices[2])))
 			{
-				std::cout << "ÍË»¯Çé¿ö";
+				std::cout << "é€€åŒ–æƒ…å†µ";
 			}
 
 			typename EK::Point_3 p = nodes.to_exact(get(vpm_sm, f_vertices[0]));
@@ -887,7 +887,7 @@ public:
 			triangle_vertices[1]->info() = f_indices[1];
 			triangle_vertices[2]->info() = f_indices[2];
 
-			// Note: node_id_to_sm_vertexµÄ×îºóÈı¸öÔªËØ¶ÔÓ¦µÄvertex»á±ä»¯, ÒòÎªnb_nodes~nb_nodes+2ÊÇfake node_id.
+			// Note: node_id_to_sm_vertexçš„æœ€åä¸‰ä¸ªå…ƒç´ å¯¹åº”çš„vertexä¼šå˜åŒ–, å› ä¸ºnb_nodes~nb_nodes+2æ˜¯fake node_id.
 			node_id_to_sm_vertex[nb_nodes] = f_vertices[0];
 			node_id_to_sm_vertex[nb_nodes + 1] = f_vertices[1];
 			node_id_to_sm_vertex[nb_nodes + 2] = f_vertices[2];
@@ -900,7 +900,7 @@ public:
 				}
 			}
 
-			// 1.2) ²åÈëÈı½ÇĞÎ¸÷±ßÉÏµÄ½»µã.
+			// 1.2) æ’å…¥ä¸‰è§’å½¢å„è¾¹ä¸Šçš„äº¤ç‚¹.
 			if (it_fb != sm_face_boundaries.end())
 			{
 				// collect infinite faces incident to the initial triangle
@@ -920,10 +920,10 @@ public:
 					NodeIdVec& ids_on_edge = f_bound.ids_on_edge[i];
 					CDT_Vertex_handle prev_CDT_vh = triangle_vertices[i];
 					NodeId prev_node_id = f_indices[i];
-					// ´Ë´¦µÄh_smµÄ¼ÆËã·½Ê½Òª²Î¿¼SMFaceBoundaryÖĞ¶ÔÓ¦¹ØÏµ.
+					// æ­¤å¤„çš„h_smçš„è®¡ç®—æ–¹å¼è¦å‚è€ƒSMFaceBoundaryä¸­å¯¹åº”å…³ç³».
 					SMHalfedge h_sm = next(f_bound.halfedges[(i + 2) % 3], sm);
 					assert(source(h_sm, sm) == f_bound.vertices[i]);
-					if (!ids_on_edge.empty()) // Èı½ÇĞÎÖÁÉÙÓĞÒ»Ìõ±ßÉÏÓĞ½»µã.
+					if (!ids_on_edge.empty()) // ä¸‰è§’å½¢è‡³å°‘æœ‰ä¸€æ¡è¾¹ä¸Šæœ‰äº¤ç‚¹.
 					{
 						for (NodeId id : ids_on_edge)
 						{
@@ -949,7 +949,7 @@ public:
 				}
 			}
 
-			// 1.3) ²åÈëÈı½ÇĞÎÄÚ²¿µÄ½»µã.
+			// 1.3) æ’å…¥ä¸‰è§’å½¢å†…éƒ¨çš„äº¤ç‚¹.
 			for (NodeId node_id : ids_in_face)
 			{
 				CDT_Vertex_handle vh = cdt.insert(nodes.exact_node(node_id));
@@ -957,7 +957,7 @@ public:
 				id_to_CDT_vh.insert(std::make_pair(node_id, vh));
 			}
 
-			// 1.4) ²åÈëÔ¼Êø±ß(½»±ß), ½»±ßÊÇ±ØĞë±£ÁôµÄ.
+			// 1.4) æ’å…¥çº¦æŸè¾¹(äº¤è¾¹), äº¤è¾¹æ˜¯å¿…é¡»ä¿ç•™çš„.
 			std::vector<std::pair<NodeId, NodeId>> constrained_edges;
 
 			// insert constraints that are interior to the triangle.
@@ -973,17 +973,17 @@ public:
 				}
 			}
 
-			// Step2 ½«CDTÏ¸»¯µÄ½á¹ûµ¼Èëµ½±íÃæÍø¸ñ, ĞŞ¸ÄÍØÆË.
+			// Step2 å°†CDTç»†åŒ–çš„ç»“æœå¯¼å…¥åˆ°è¡¨é¢ç½‘æ ¼, ä¿®æ”¹æ‹“æ‰‘.
 			// 
 			// import the triangle in `cdt` to the face `f` of `sm`.
 			// 
-			// Note: ÔÚStep1ÖĞ, ÒÑ¾­Íê³ÉÁËÈı½Ç»¯, µ«Èı½Ç»¯µÄ½á¹ûÈ«²¿ÔÚCDT¶ÔÏóÖĞ,
-			//       ĞèÒª½«Èı½Ç»¯µÄ½á¹ûÈ¡³ö, ×÷ÓÃµ½ÃæfÉÏ, Õâ»áĞŞ¸Äsm.
+			// Note: åœ¨Step1ä¸­, å·²ç»å®Œæˆäº†ä¸‰è§’åŒ–, ä½†ä¸‰è§’åŒ–çš„ç»“æœå…¨éƒ¨åœ¨CDTå¯¹è±¡ä¸­,
+			//       éœ€è¦å°†ä¸‰è§’åŒ–çš„ç»“æœå–å‡º, ä½œç”¨åˆ°é¢fä¸Š, è¿™ä¼šä¿®æ”¹sm.
 			//
 			import_cdt_to_sm_face(f, cdt, ids_in_face, edge_to_halfedge, sm, vpm_sm, nodes);
 
-			// Step3 ÊÕ¼¯½»±ßĞÅÏ¢²¢¼ÇÂ¼.
-			// ½»±ßÊÇÏÂÒ»²½ÌáÈ¡ËùĞèÒªµÄ, Ö®Ç°µÄ²½ÖèÖĞÉĞÎ´´´½¨, ´ËÊ±ÒÑ¾­´´½¨, ĞèÒª¼ÇÂ¼ÔÚOutputBuilderµÄÊı¾İ³ÉÔ±ÖĞ.
+			// Step3 æ”¶é›†äº¤è¾¹ä¿¡æ¯å¹¶è®°å½•.
+			// äº¤è¾¹æ˜¯ä¸‹ä¸€æ­¥æå–æ‰€éœ€è¦çš„, ä¹‹å‰çš„æ­¥éª¤ä¸­å°šæœªåˆ›å»º, æ­¤æ—¶å·²ç»åˆ›å»º, éœ€è¦è®°å½•åœ¨OutputBuilderçš„æ•°æ®æˆå‘˜ä¸­.
 			for (const NodeIdPair& id_pair : constrained_edges)
 			{
 				typename std::map<NodeIdPair, SMHalfedge>::iterator
@@ -1230,14 +1230,14 @@ public:
 				}
 			}
 
-			// Step2 ½«CDTÏ¸»¯µÄ½á¹ûµ¼Èëµ½¶àÃæÌåÍø¸ñ, ĞŞ¸ÄÍØÆË.
+			// Step2 å°†CDTç»†åŒ–çš„ç»“æœå¯¼å…¥åˆ°å¤šé¢ä½“ç½‘æ ¼, ä¿®æ”¹æ‹“æ‰‘.
 			std::unordered_map<PMFace, std::vector<PMVertex>> f_to_vseq;
 			collect_triangulation_info(f, ids_in_face, cdt, pm, vpm_pm, nodes, f_to_vseq, endpoint_to_edge);
 
 			pm.import_triangulation_info(f, f_to_vseq, endpoint_to_edge);
 
-			// Step3 ÊÕ¼¯½»±ßĞÅÏ¢²¢¼ÇÂ¼.
-			// ½»±ßÊÇÏÂÒ»²½ÌáÈ¡ËùĞèÒªµÄ, Ö®Ç°µÄ²½ÖèÖĞÉĞÎ´´´½¨, ´ËÊ±ÒÑ¾­´´½¨, ĞèÒª¼ÇÂ¼ÔÚOutputBuilderµÄÊı¾İ³ÉÔ±ÖĞ.
+			// Step3 æ”¶é›†äº¤è¾¹ä¿¡æ¯å¹¶è®°å½•.
+			// äº¤è¾¹æ˜¯ä¸‹ä¸€æ­¥æå–æ‰€éœ€è¦çš„, ä¹‹å‰çš„æ­¥éª¤ä¸­å°šæœªåˆ›å»º, æ­¤æ—¶å·²ç»åˆ›å»º, éœ€è¦è®°å½•åœ¨OutputBuilderçš„æ•°æ®æˆå‘˜ä¸­.
 			for (const NodeIdPair& id_pair : constrained_edges)
 			{
 				NodeId i0 = id_pair.first;
@@ -1271,7 +1271,7 @@ public:
 		}
 	}
 
-	// finalize: ÊÍÒåÎª×îÖÕÈ·¶¨, ÔÚ´ËµÄÒâË¼ÊÇÈı½Ç»¯Ïà½»ÇøÓò²¢×÷ÓÃµ½Íø¸ñÉÏ.
+	// finalize: é‡Šä¹‰ä¸ºæœ€ç»ˆç¡®å®š, åœ¨æ­¤çš„æ„æ€æ˜¯ä¸‰è§’åŒ–ç›¸äº¤åŒºåŸŸå¹¶ä½œç”¨åˆ°ç½‘æ ¼ä¸Š.
 	void finalize(INodes& nodes,
 				  SurfaceMesh& sm,
 				  PolyhedralMesh& pm,
