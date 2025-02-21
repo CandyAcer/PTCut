@@ -2,11 +2,6 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
-#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
-#include <CGAL/Polygon_mesh_processing/self_intersections.h>
-#include <CGAL/Polygon_mesh_processing/orientation.h>
-#include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
-
 #include "pm/polyhedral_mesh.h"
 #include "io/polyhedral_mesh_io.h"
 #include "io/embedded_body_io.h"
@@ -16,7 +11,6 @@
 #include "algo/output_builder.h"
 
 
-// 调用需要三个参数: 截断网格文件根目录, 切割体路径, 输出的根目录.
 int main(int argc, char* argv[])
 {
 	typedef CGAL::Exact_predicates_inexact_constructions_kernel    K;
