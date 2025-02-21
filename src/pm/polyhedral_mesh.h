@@ -11,10 +11,10 @@
 
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/boost/graph/iterator.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/iterator/iterator_facade.hpp>
-#include <CGAL/boost/graph/iterator.h>
 
 #include <array>
 #include <queue>
@@ -27,15 +27,15 @@
 #include "iterator.h"
 #include "util/sorted_pair.h"
 
-namespace MCAL {   // Mesh Cut Algorithm Libaray, ´æ·Å¶àÃæÌåÍø¸ñÇĞ¸îËã·¨µÄËùÓĞ´úÂë
-namespace MESH {   // ´æ·Å¶àÃæÌåÍø¸ñÊµÏÖµÄÏà¹Ø´úÂë
+namespace MCAL {   // Mesh Cut Algorithm Libaray, å­˜æ”¾å¤šé¢ä½“ç½‘æ ¼åˆ‡å‰²ç®—æ³•çš„æ‰€æœ‰ä»£ç 
+namespace MESH {   // å­˜æ”¾å¤šé¢ä½“ç½‘æ ¼å®ç°çš„ç›¸å…³ä»£ç 
 
 /*
-* ¶àÃæÌåÍø¸ñµÄÊµÏÖ´úÂë, °üº¬ÊôĞÔ¹ÜÀí, ÍØÆË²éÑ¯, ÍØÆËĞŞ¸ÄµÈ¹¦ÄÜ.
+* å¤šé¢ä½“ç½‘æ ¼çš„å®ç°ä»£ç , åŒ…å«å±æ€§ç®¡ç†, æ‹“æ‰‘æŸ¥è¯¢, æ‹“æ‰‘ä¿®æ”¹ç­‰åŠŸèƒ½.
 *
-* @param P£ºµãµÄÀàĞÍ, ¿ÉÒÔÊÇdoubleÈıÔª×é»ò¶à¾«¶ÈµÄ¾«È·ÀàĞÍ.
-* @param T£ºCellTopoÖĞµÄhalfedgesÊ¹ÓÃ¾Ö²¿Ë÷ÒıÖ¸Ê¾ÒıÓÃµÄvertexÓëedge,
-*           ¾Ö²¿Ë÷ÒıµÄÊı¾İÀàĞÍ, ÆäÊı¾İ¿í¶È¾ö¶¨Ò»¸öµ¥Ôª°üº¬¶àÉÙ¼¸ºÎÔªËØ.
+* @param Pï¼šç‚¹çš„ç±»å‹, å¯ä»¥æ˜¯doubleä¸‰å…ƒç»„æˆ–å¤šç²¾åº¦çš„ç²¾ç¡®ç±»å‹.
+* @param Tï¼šCellTopoä¸­çš„halfedgesä½¿ç”¨å±€éƒ¨ç´¢å¼•æŒ‡ç¤ºå¼•ç”¨çš„vertexä¸edge,
+*           å±€éƒ¨ç´¢å¼•çš„æ•°æ®ç±»å‹, å…¶æ•°æ®å®½åº¦å†³å®šä¸€ä¸ªå•å…ƒåŒ…å«å¤šå°‘å‡ ä½•å…ƒç´ .
 *
 */
 template <typename P, typename T>
@@ -65,7 +65,7 @@ public:
 
     struct CellInfo
     {
-        int iidx, jidx, kidx; // CellµÄIJKÊôĞÔ
+        int iidx, jidx, kidx; // Cellçš„IJKå±æ€§
         CellType ctype;
 
         CellInfo(int i = std::numeric_limits<int>::max(),
@@ -87,14 +87,14 @@ public:
     typedef PMFaceIndex            FaceIndex;
     typedef PMCellIndex            CellIndex;
 
-public:// ÍØÆË¶¨Òå
+public:// æ‹“æ‰‘å®šä¹‰
 
-    // ¶àÃæÌåÍø¸ñµÄhalfedgeÓÃÒ»¸ö¶şÔª×é±íÊ¾
-    // Ö¸Ê¾ÆäËùÔÚµÄcellÒÔ¼°CellTopoµÄhalfedgesÊı×éÖĞµÄÏÂ±ê
+    // å¤šé¢ä½“ç½‘æ ¼çš„halfedgeç”¨ä¸€ä¸ªäºŒå…ƒç»„è¡¨ç¤º
+    // æŒ‡ç¤ºå…¶æ‰€åœ¨çš„cellä»¥åŠCellTopoçš„halfedgesæ•°ç»„ä¸­çš„ä¸‹æ ‡
     struct Halfedge
     {
-        CellIndex he_cell;  // ËùÔÚcell
-        size_type he_off;   // CellTopoµÄhalfedgesÊı×éÖĞµÄÏÂ±ê
+        CellIndex he_cell;  // æ‰€åœ¨cell
+        size_type he_off;   // CellTopoçš„halfedgesæ•°ç»„ä¸­çš„ä¸‹æ ‡
 
         Halfedge(CellIndex c = CellIndex(),
             size_type i = std::numeric_limits<size_type>::max())
@@ -122,7 +122,7 @@ public:// ÍØÆË¶¨Òå
             return he_cell == rhs.he_cell && he_off == rhs.he_off;
         }
 
-        // ×÷ÎªmapµÄkey, ±ØĞëÊµÏÖÑÏ¸ñÈõĞò, ¼´Ğ¡ÓÚ¹ØÏµ.
+        // ä½œä¸ºmapçš„key, å¿…é¡»å®ç°ä¸¥æ ¼å¼±åº, å³å°äºå…³ç³».
         bool operator<(const Halfedge& rhs) const
         {
             return he_cell < rhs.he_cell || (he_cell == rhs.he_cell && he_off < rhs.he_off);
@@ -138,32 +138,32 @@ public:// ÍØÆË¶¨Òå
 
     struct VertexTopo
     {
-        Halfedge halfedge;  // vertexÎªhalfedgeµÄsource.
+        Halfedge halfedge;  // vertexä¸ºhalfedgeçš„source.
     };
 
     struct EdgeTopo
     {
-        Halfedge halfedge;  // edge¶ÔÓ¦µÄÄ³Ìõhalfedge(ÎŞ¹Ì¶¨ÊıÁ¿¹ØÏµ, ±íÃæÍø¸ñÎª1:2)
+        Halfedge halfedge;  // edgeå¯¹åº”çš„æŸæ¡halfedge(æ— å›ºå®šæ•°é‡å…³ç³», è¡¨é¢ç½‘æ ¼ä¸º1:2)
     };
 
     struct FaceTopo
     {
         Halfedge halfedge;
-        std::array<CellIndex, 2> incident_cells;  // face¹ØÁªµÄcell
+        std::array<CellIndex, 2> incident_cells;  // faceå…³è”çš„cell
     };
 
     struct CellTopo
     {
-        // ³õÊ¼×´Ì¬³ıÁËoffsetµÄÈİÆ÷¶¼Îª¿Õ, offsetÓĞÒ»¸öÔªËØ
+        // åˆå§‹çŠ¶æ€é™¤äº†offsetçš„å®¹å™¨éƒ½ä¸ºç©º, offsetæœ‰ä¸€ä¸ªå…ƒç´ 
         CellTopo()
         {
             offset.push_back(std::numeric_limits<size_type>::max());
         }
 
-        std::vector<VertexIndex>      vertices;    // cell°üº¬µÄËùÓĞvertex
-        std::vector<EdgeIndex>        edges;       // cell°üº¬µÄËùÓĞedge
-        std::vector<FaceIndex>        faces;       // cell°üº¬µÄËùÓĞface
-        std::vector<size_type>        offset;      // faceÔÚhalfedgesÖĞµÄ¿ªÊ¼Î»ÖÃ, ±Èfaces¶à1
+        std::vector<VertexIndex>      vertices;    // cellåŒ…å«çš„æ‰€æœ‰vertex
+        std::vector<EdgeIndex>        edges;       // cellåŒ…å«çš„æ‰€æœ‰edge
+        std::vector<FaceIndex>        faces;       // cellåŒ…å«çš„æ‰€æœ‰face
+        std::vector<size_type>        offset;      // faceåœ¨halfedgesä¸­çš„å¼€å§‹ä½ç½®, æ¯”faceså¤š1
         std::vector<std::pair<bias_type, bias_type>> halfedges;
     };
 
@@ -177,13 +177,13 @@ public:
     // assigns `rhs` to `*this`. Performs a deep copy of all properties.
     PolyhedralMesh& operator=(const PolyhedralMesh& rhs);
 
-private: // ¼¸ºÎÔªËØµÄµü´ú
+private: // å‡ ä½•å…ƒç´ çš„è¿­ä»£
 
     template <typename Index>
     class IndexIterator
         :public boost::iterator_facade<IndexIterator<Index>,/*Derived Class*/
-                                       Index,/*µü´úÆ÷ÖµµÄÀàĞÍ*/
-                                       std::random_access_iterator_tag/*µü´úÆ÷ÀàĞÍ*/>
+                                       Index,/*è¿­ä»£å™¨å€¼çš„ç±»å‹*/
+                                       std::random_access_iterator_tag/*è¿­ä»£å™¨ç±»å‹*/>
     {
     public:
         typedef boost::iterator_facade<IndexIterator<Index>,
@@ -197,7 +197,7 @@ private: // ¼¸ºÎÔªËØµÄµü´ú
         {
             if (mesh && mesh->has_garbage())
             {
-                // µ±idx±»±ê¼ÇÎªÒÑÉ¾³ıÊ±, Ó¦µ±+1, Ö±ÖÁÕÒµ½²»Ô½½çÇÒÎ´É¾³ıµÄË÷Òı
+                // å½“idxè¢«æ ‡è®°ä¸ºå·²åˆ é™¤æ—¶, åº”å½“+1, ç›´è‡³æ‰¾åˆ°ä¸è¶Šç•Œä¸”æœªåˆ é™¤çš„ç´¢å¼•
                 while (mesh->has_valid_index(idx) && mesh->is_removed(idx))
                     ++idx;
             }
@@ -282,8 +282,8 @@ private: // ¼¸ºÎÔªËØµÄµü´ú
         Index& dereference() const { return const_cast<Index&>(idx); }
 
     private:
-        Index idx;                    // µü´úµÄ¼¸ºÎÔªËØindex
-        const PolyhedralMesh* mesh;   // indexËùÔÚµÄÍø¸ñ, ±ãÓÚ·ÃÎÊindexÊÇ·ñ±»±ê¼ÇÉ¾³ı
+        Index idx;                    // è¿­ä»£çš„å‡ ä½•å…ƒç´ index
+        const PolyhedralMesh* mesh;   // indexæ‰€åœ¨çš„ç½‘æ ¼, ä¾¿äºè®¿é—®indexæ˜¯å¦è¢«æ ‡è®°åˆ é™¤
     };
 
 public:
@@ -372,54 +372,54 @@ public:
     }
 
 public:
-    /*-------------------- ÄÚ´æ¹ÜÀíÄ£¿é -------------------------------
+    /*-------------------- å†…å­˜ç®¡ç†æ¨¡å— -------------------------------
     *
-    * ¸ÃÄ£¿éµÄÖ÷Òª¹¦ÄÜÊÇ¹ÜÀí¼¸ºÎÔªËØµÄÔö¼õ, ²¢ÔÚ´Ë¹ı³ÌÖĞ¹ÜÀíÄÚ´æ
+    * è¯¥æ¨¡å—çš„ä¸»è¦åŠŸèƒ½æ˜¯ç®¡ç†å‡ ä½•å…ƒç´ çš„å¢å‡, å¹¶åœ¨æ­¤è¿‡ç¨‹ä¸­ç®¡ç†å†…å­˜
     *
-    * ÔÚËã·¨Ö´ĞĞ¹ı³ÌÖĞ, »áÉ¾³ıºÍÌí¼Ó¼¸ºÎÔªËØ
-    * ¼¸ºÎÔªËØµÄµÄÊôĞÔÍ³Ò»·ÅÔÚÒ»¸övectorÖĞ, ÔÚÊı×éµÄËæ»úÎ»ÖÃÉ¾³ıµÄĞÔÄÜÏûºÄ½Ï´ó
-    * ¹Ê²ÉÓÃÒÔÏÂ·½·¨£º
-    *     1) É¾³ıÄ³¸ö¼¸ºÎÔªËØÊ±, ²¢²»Êµ¼ÊÉ¾³ı, ¶øÊÇ½«Æä±ê¼ÇÎªremoved
-    *     2) ±»±ê¼ÇÎªÉ¾³ıµÄindexÔÚÌí¼ÓÊ±¿ÉÒÔÖØĞÂ·ÖÅä(Ñ­»·ÀûÓÃ)
+    * åœ¨ç®—æ³•æ‰§è¡Œè¿‡ç¨‹ä¸­, ä¼šåˆ é™¤å’Œæ·»åŠ å‡ ä½•å…ƒç´ 
+    * å‡ ä½•å…ƒç´ çš„çš„å±æ€§ç»Ÿä¸€æ”¾åœ¨ä¸€ä¸ªvectorä¸­, åœ¨æ•°ç»„çš„éšæœºä½ç½®åˆ é™¤çš„æ€§èƒ½æ¶ˆè€—è¾ƒå¤§
+    * æ•…é‡‡ç”¨ä»¥ä¸‹æ–¹æ³•ï¼š
+    *     1) åˆ é™¤æŸä¸ªå‡ ä½•å…ƒç´ æ—¶, å¹¶ä¸å®é™…åˆ é™¤, è€Œæ˜¯å°†å…¶æ ‡è®°ä¸ºremoved
+    *     2) è¢«æ ‡è®°ä¸ºåˆ é™¤çš„indexåœ¨æ·»åŠ æ—¶å¯ä»¥é‡æ–°åˆ†é…(å¾ªç¯åˆ©ç”¨)
     *
     */
 
-    // ´Ë´¦½âÊÍÒ»ÏÂvertices_freelistµÄ×÷ÓÃ
-    // ÔÚËã·¨Ôö¼õÔªËØµÄ¹ı³ÌÖĞ, ¿ÉÒÔ°´É¾³ıµÄÏÈºóË³Ğò½«VertexIndex½øĞĞÅÅÁĞ
-    // ĞÂÔöÔªËØÊ±, ¿ÉÒÔ½«×î½ü±»É¾³ıµÄ·ÖÅä¸øĞÂÔªËØ, ´ËÊ±Õâ¸öÏßĞÔ±íµÄĞĞÎªÀàËÆÓÚÕ»
-    // Âß¼­ÉÏ¿´, Õâ¸öÅÅÁĞÊÇÒ»¸öÏßĞÔ±í, ËÆºõ¿ÉÒÔÓÃÁ´±í»òÊı×é½øĞĞ¼ÇÂ¼, µ«ÏûºÄ½Ï´ó
+    // æ­¤å¤„è§£é‡Šä¸€ä¸‹vertices_freelistçš„ä½œç”¨
+    // åœ¨ç®—æ³•å¢å‡å…ƒç´ çš„è¿‡ç¨‹ä¸­, å¯ä»¥æŒ‰åˆ é™¤çš„å…ˆåé¡ºåºå°†VertexIndexè¿›è¡Œæ’åˆ—
+    // æ–°å¢å…ƒç´ æ—¶, å¯ä»¥å°†æœ€è¿‘è¢«åˆ é™¤çš„åˆ†é…ç»™æ–°å…ƒç´ , æ­¤æ—¶è¿™ä¸ªçº¿æ€§è¡¨çš„è¡Œä¸ºç±»ä¼¼äºæ ˆ
+    // é€»è¾‘ä¸Šçœ‹, è¿™ä¸ªæ’åˆ—æ˜¯ä¸€ä¸ªçº¿æ€§è¡¨, ä¼¼ä¹å¯ä»¥ç”¨é“¾è¡¨æˆ–æ•°ç»„è¿›è¡Œè®°å½•, ä½†æ¶ˆè€—è¾ƒå¤§
     //
-    // ÎÒÃÇ²»ÓÃÊı×é»òÁ´±íÊµÏÖ, Ò»¸öÎŞ·ûºÅÕûÊıvertices_freelist×ãÒÓ
-    // ËüÀàËÆÓÚÕ»¶¥Ö¸Õë, Ê¼ÖÕ¼ÇÂ¼×î½ü±»É¾³ıµÄÔªËØµÄË÷Òı
-    // Ö®ËùÒÔÃüÃûÎªfreelist, ËµÃ÷¸Ã±äÁ¿ÔÚÄ£ÄâÒ»¸öÄÚ´æÊÍ·Å(free)µÄÁ´±í(list)
+    // æˆ‘ä»¬ä¸ç”¨æ•°ç»„æˆ–é“¾è¡¨å®ç°, ä¸€ä¸ªæ— ç¬¦å·æ•´æ•°vertices_freelistè¶³çŸ£
+    // å®ƒç±»ä¼¼äºæ ˆé¡¶æŒ‡é’ˆ, å§‹ç»ˆè®°å½•æœ€è¿‘è¢«åˆ é™¤çš„å…ƒç´ çš„ç´¢å¼•
+    // ä¹‹æ‰€ä»¥å‘½åä¸ºfreelist, è¯´æ˜è¯¥å˜é‡åœ¨æ¨¡æ‹Ÿä¸€ä¸ªå†…å­˜é‡Šæ”¾(free)çš„é“¾è¡¨(list)
     //
-    // µ«Õâ¸öÅÅÁĞÊÇÒ»ÖÖÏßĞÔ¹ØÏµ, ½Úµã¼äµÄÇ°Çıºó¼Ì¹ØÏµÔõÃ´±íÊ¾ÄØ£¿
-    // ÎÒÃÇ×¢Òâµ½, ±ê¼ÇÎªÉ¾³ıµÄVertexIndex¶ÔÓ¦µÄËùÓĞÊôĞÔÖµ¶¼ÊÇ²»¿ÉÊ¹ÓÃµÄ
-    // ÄÇÃ´¿ÉÒÔ½èVertexTopoÀ´¼ÇÂ¼ÏÂÒ»¸ö½áµã
+    // ä½†è¿™ä¸ªæ’åˆ—æ˜¯ä¸€ç§çº¿æ€§å…³ç³», èŠ‚ç‚¹é—´çš„å‰é©±åç»§å…³ç³»æ€ä¹ˆè¡¨ç¤ºå‘¢ï¼Ÿ
+    // æˆ‘ä»¬æ³¨æ„åˆ°, æ ‡è®°ä¸ºåˆ é™¤çš„VertexIndexå¯¹åº”çš„æ‰€æœ‰å±æ€§å€¼éƒ½æ˜¯ä¸å¯ä½¿ç”¨çš„
+    // é‚£ä¹ˆå¯ä»¥å€ŸVertexTopoæ¥è®°å½•ä¸‹ä¸€ä¸ªç»“ç‚¹
     //
-    // ÕâÖÖ·½Ê½ºÜÇÉÃî, Í¨¹ı½èÓÃ·ÏÆúµÄÄÚ´æ¿Õ¼ä, Ö»ÓÃÒ»¸öÎŞ·ûºÅÕûÊı±ãÊµÏÖ³öÁËÒ»¸öÏßĞÔ±í
-    // ¼«´óµØ¼õÉÙÁËÄÚ´æÕ¼ÓÃ
+    // è¿™ç§æ–¹å¼å¾ˆå·§å¦™, é€šè¿‡å€Ÿç”¨åºŸå¼ƒçš„å†…å­˜ç©ºé—´, åªç”¨ä¸€ä¸ªæ— ç¬¦å·æ•´æ•°ä¾¿å®ç°å‡ºäº†ä¸€ä¸ªçº¿æ€§è¡¨
+    // æå¤§åœ°å‡å°‘äº†å†…å­˜å ç”¨
     //
-    // edges_freelist,faces_freelist,cells_freelistÍ¬Àí
-    // freelistµÄ³õÊ¼ÖµÓ¦Îª·Ç·¨Öµ(¼´×î´óÖµ), ¿ÉÊÓÎªÁ´±íµÄ¿Õ½áµã(¿Õ½áµã¿É¼ò»¯²Ù×÷)
+    // edges_freelist,faces_freelist,cells_freeliståŒç†
+    // freelistçš„åˆå§‹å€¼åº”ä¸ºéæ³•å€¼(å³æœ€å¤§å€¼), å¯è§†ä¸ºé“¾è¡¨çš„ç©ºç»“ç‚¹(ç©ºç»“ç‚¹å¯ç®€åŒ–æ“ä½œ)
     //
 
     VertexIndex add_vertex()
     {
         size_type inf = std::numeric_limits<size_type>::max();
 
-        // recycleÎªtrue±íÊ¾Íø¸ñ»á»ØÊÕÀûÓÃÒÑ±ê¼ÇÎªÉ¾³ıµÄIndex
-        // vertices_freelist != inf ±íÊ¾É¾³ı¹ıÔªËØ, ¿ÉÒÔ½øĞĞ·ÖÅä
+        // recycleä¸ºtrueè¡¨ç¤ºç½‘æ ¼ä¼šå›æ”¶åˆ©ç”¨å·²æ ‡è®°ä¸ºåˆ é™¤çš„Index
+        // vertices_freelist != inf è¡¨ç¤ºåˆ é™¤è¿‡å…ƒç´ , å¯ä»¥è¿›è¡Œåˆ†é…
         if (recycle && (vertices_freelist != inf))
         {
-            VertexIndex v(vertices_freelist);   // ·ÖÅä×î½üÒÑÉ¾³ıµÄË÷Òı
-            vertices_freelist = vtopo[v].halfedge.he_off;   //¸üĞÂfreelist
+            VertexIndex v(vertices_freelist);   // åˆ†é…æœ€è¿‘å·²åˆ é™¤çš„ç´¢å¼•
+            vertices_freelist = vtopo[v].halfedge.he_off;   //æ›´æ–°freelist
             --removed_vertices;
-            vremoved[v] = false;   // ÖØÖÃremoved±ê¼Ç
-            vprops.reset(v);       // ÖØÖÃv¶ÔÓ¦µÄËùÓĞÊôĞÔÖµ, ºóĞø¿ÉĞŞ¸Ä
+            vremoved[v] = false;   // é‡ç½®removedæ ‡è®°
+            vprops.reset(v);       // é‡ç½®vå¯¹åº”çš„æ‰€æœ‰å±æ€§å€¼, åç»­å¯ä¿®æ”¹
             return v;
         }
-        else    // ²»¿É·ÖÅäÊ±push_back¼´¿É(index+1), ½Ï¼òµ¥
+        else    // ä¸å¯åˆ†é…æ—¶push_backå³å¯(index+1), è¾ƒç®€å•
         {
             vprops.push_back();
             return VertexIndex(num_vertices() - 1);
@@ -493,13 +493,13 @@ public:
         }
     }
 
-    // É¾³ıVertex, ½ö±ê¼ÇÎªÉ¾³ı, Æä¹ØÁªµÄËùÓĞÊôĞÔÈÔÔÚÄÚ´æÖĞ
+    // åˆ é™¤Vertex, ä»…æ ‡è®°ä¸ºåˆ é™¤, å…¶å…³è”çš„æ‰€æœ‰å±æ€§ä»åœ¨å†…å­˜ä¸­
     void remove_vertex(VertexIndex v)
     {
         vremoved[v] = true; ++removed_vertices; garbage = true;
 
-        // VertexTopo¼ÇÂ¼ÁËÒ»Ìõhalfedge, HalfedgeÓĞÁ½¸öÊı¾İ³ÉÔ±
-        // ÎÒÃÇÓÃhe_offÀ´¼ÇÂ¼vertices_freelist(ÒòÎªÀàĞÍ¶¼ÊÇsize_type)
+        // VertexTopoè®°å½•äº†ä¸€æ¡halfedge, Halfedgeæœ‰ä¸¤ä¸ªæ•°æ®æˆå‘˜
+        // æˆ‘ä»¬ç”¨he_offæ¥è®°å½•vertices_freelist(å› ä¸ºç±»å‹éƒ½æ˜¯size_type)
         vtopo[v].halfedge.he_off = vertices_freelist;
         vertices_freelist = (size_type)v;
     }
@@ -521,28 +521,28 @@ public:
     void remove_cell(CellIndex c)
     {
         cremoved[c] = true; ++removed_cells; garbage = true;
-        // CellTopoÖĞ²»¼ÇÂ¼halfedge, ËùÒÔ²»ÄÜÏñÇ°Èı¸öº¯ÊıÒ»Ñù
-        // CellTopoµÄÄ¬ÈÏ¹¹Ôìº¯Êı¹¹Ôì³öµÄ¶ÔÏóÖĞoffsetÓĞÒ»¸öÔªËØ, ÆäÓàÎª¿Õ
-        // ¿ÉÒÔÊ¹ÓÃÕâ¸öÔªËØ¼ÇÂ¼
+        // CellTopoä¸­ä¸è®°å½•halfedge, æ‰€ä»¥ä¸èƒ½åƒå‰ä¸‰ä¸ªå‡½æ•°ä¸€æ ·
+        // CellTopoçš„é»˜è®¤æ„é€ å‡½æ•°æ„é€ å‡ºçš„å¯¹è±¡ä¸­offsetæœ‰ä¸€ä¸ªå…ƒç´ , å…¶ä½™ä¸ºç©º
+        // å¯ä»¥ä½¿ç”¨è¿™ä¸ªå…ƒç´ è®°å½•
         ctopo[c].offset[0] = cells_freelist;
         cells_freelist = (size_type)c;
     }
 
     // The number of used and removed vertices in the gird.
-    // ¶àÃæÌåÍø¸ñÖĞ¼¸ºÎÔªËØ(vertex, edge, face, cell)µÄ×ÜÊı(°üÀ¨ÒÑ±ê¼ÇÉ¾³ıµÄ)
-    // ÊµÖÊÊÇÒÑ¾­·ÖÅäµÄindex×ÜÊı
+    // å¤šé¢ä½“ç½‘æ ¼ä¸­å‡ ä½•å…ƒç´ (vertex, edge, face, cell)çš„æ€»æ•°(åŒ…æ‹¬å·²æ ‡è®°åˆ é™¤çš„)
+    // å®è´¨æ˜¯å·²ç»åˆ†é…çš„indexæ€»æ•°
     size_type num_vertices() const { return (size_type)vprops.size(); }
     size_type num_edges() const { return (size_type)eprops.size(); }
     size_type num_faces() const { return (size_type)fprops.size(); }
     size_type num_cells() const { return (size_type)cprops.size(); }
 
-    // ¶àÃæÌåÍø¸ñÖĞ±»±ê¼ÇÎªÒÑÉ¾³ıµÄ¼¸ºÎÔªËØ(vertex, edge, face, cell)×ÜÊı
+    // å¤šé¢ä½“ç½‘æ ¼ä¸­è¢«æ ‡è®°ä¸ºå·²åˆ é™¤çš„å‡ ä½•å…ƒç´ (vertex, edge, face, cell)æ€»æ•°
     size_type number_of_removed_vertices() const { return removed_vertices; }
     size_type number_of_removed_edges() const { return removed_edges; }
     size_type number_of_removed_faces() const { return removed_faces; }
     size_type number_of_removed_cells() const { return removed_cells; }
 
-    // ¶àÃæÌåÍø¸ñ°üº¬µÄ¼¸ºÎÔªËØ(vertex, edge, face, cell)×ÜÊı
+    // å¤šé¢ä½“ç½‘æ ¼åŒ…å«çš„å‡ ä½•å…ƒç´ (vertex, edge, face, cell)æ€»æ•°
     size_type number_of_used_vertices() const
     {
         return num_vertices() - number_of_removed_vertices();
@@ -570,10 +570,10 @@ public:
 
     void clear();
 
-    // ÊÇ·ñÓĞÔªËØ±»±ê¼ÇÎªÉ¾³ı
+    // æ˜¯å¦æœ‰å…ƒç´ è¢«æ ‡è®°ä¸ºåˆ é™¤
     bool has_garbage() const { return garbage; }
 
-public: /*-------------------- ºÏ·¨ĞÔ¼ì²é -------------------------*/
+public: /*-------------------- åˆæ³•æ€§æ£€æŸ¥ -------------------------*/
 
     bool has_valid_index(VertexIndex v) const
     {
@@ -636,16 +636,16 @@ public: /*-------------------- ºÏ·¨ĞÔ¼ì²é -------------------------*/
 private:
     /* 
     * helper functions used in topological query.
-    * ½«ÍØÆË²éÑ¯Ïà¹Øº¯ÊıÖĞ¹«ÓÃµÄÒ»Ğ©´úÂëÌáÈ¡³öÀ´, Ğ´³Éhelper function, ¼ò»¯´úÂë.
+    * å°†æ‹“æ‰‘æŸ¥è¯¢ç›¸å…³å‡½æ•°ä¸­å…¬ç”¨çš„ä¸€äº›ä»£ç æå–å‡ºæ¥, å†™æˆhelper function, ç®€åŒ–ä»£ç .
     */
 
-    // halfedgeËùÔÚµÄfaceÔÚcellÍØÆËµÄfacesÊı×éÖĞµÄË÷Òı.
+    // halfedgeæ‰€åœ¨çš„faceåœ¨cellæ‹“æ‰‘çš„facesæ•°ç»„ä¸­çš„ç´¢å¼•.
     size_type halfedge_related_face_index(Halfedge h, CellIndex c) const
     {
         assert(h.he_cell == c);
         const CellTopo& cell_topo = ctopo[c];
         size_type off = h.he_off;
-        assert(off < cell_topo.offset.back());  // off²»Ó¦´óÓÚoffsetÊı×éµÄ×îºóÒ»¸öÔªËØ.
+        assert(off < cell_topo.offset.back());  // offä¸åº”å¤§äºoffsetæ•°ç»„çš„æœ€åä¸€ä¸ªå…ƒç´ .
 
         size_type fi = 0;
         while (off >= cell_topo.offset[fi])
@@ -653,7 +653,7 @@ private:
         return fi - 1;
     }
 
-    // faceÔÚcellÍØÆËµÄfacesÊı×éÖĞÊÇ·ñ´æÔÚ, Èô´æÔÚ·µ»ØÆäË÷Òı, ²»´æÔÚ·µ»ØinvalidÖµ.
+    // faceåœ¨cellæ‹“æ‰‘çš„facesæ•°ç»„ä¸­æ˜¯å¦å­˜åœ¨, è‹¥å­˜åœ¨è¿”å›å…¶ç´¢å¼•, ä¸å­˜åœ¨è¿”å›invalidå€¼.
     size_type face_location_in_cell(FaceIndex f, CellIndex c) const
     {
         const CellTopo& cell_topo = ctopo[c];
@@ -662,14 +662,14 @@ private:
             if (cell_topo.faces[i] == f)
                 return i;
         }
-        // ²»´æÔÚ·µ»ØinvalidÖµ.
+        // ä¸å­˜åœ¨è¿”å›invalidå€¼.
         return std::numeric_limits<size_type>::max();
     }
 
-public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
+public: /*-------------------- æ‹“æ‰‘æŸ¥è¯¢ç›¸å…³å®ç° ------------------------*/
 
-    // halfedgeµÄÆğÊ¼µã.
-    // halfedgesÊı×éÖĞ¼ÇÂ¼µÄ<V,E>, VÊÇ¶ÔÓ¦°ë±ßµÄÆğÊ¼µã¶ø·ÇÖÕµã.
+    // halfedgeçš„èµ·å§‹ç‚¹.
+    // halfedgesæ•°ç»„ä¸­è®°å½•çš„<V,E>, Væ˜¯å¯¹åº”åŠè¾¹çš„èµ·å§‹ç‚¹è€Œéç»ˆç‚¹.
     VertexIndex source(Halfedge h) const
     {
         CellIndex& c = h.he_cell;
@@ -680,7 +680,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
         return cell_topo.vertices[vbias];
     }
 
-    // halfedgeÖ¸ÏòµÄµã
+    // halfedgeæŒ‡å‘çš„ç‚¹
     VertexIndex target(Halfedge h) const
     {
         CellIndex& c = h.he_cell;
@@ -689,9 +689,9 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
 
         size_type fi = halfedge_related_face_index(h, c);
 
-        // h¶ÔÓ¦µÄtargetÊÇoffËùÖ¸Î»ÖÃµÄÏÂÒ»¸ö, Óöµ½±ß½çÊ±ÎªfaceµãĞòÁĞµÄµÚÒ»¸ö
+        // hå¯¹åº”çš„targetæ˜¯offæ‰€æŒ‡ä½ç½®çš„ä¸‹ä¸€ä¸ª, é‡åˆ°è¾¹ç•Œæ—¶ä¸ºfaceç‚¹åºåˆ—çš„ç¬¬ä¸€ä¸ª
         bias_type vbias;
-        if (off + 1 == cell_topo.offset[fi + 1]) // offÎªfaceµãĞòÁĞµÄ×îºóÒ»¸ö
+        if (off + 1 == cell_topo.offset[fi + 1]) // offä¸ºfaceç‚¹åºåˆ—çš„æœ€åä¸€ä¸ª
         {
             size_type fstart = cell_topo.offset[fi];
             vbias = cell_topo.halfedges[fstart].first;
@@ -702,7 +702,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
         return cell_topo.vertices[vbias];
     }
 
-    // halfedgeËùÔÚµÄedge
+    // halfedgeæ‰€åœ¨çš„edge
     EdgeIndex edge(Halfedge h) const
     {
         CellIndex& c = h.he_cell;
@@ -713,7 +713,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
         return cell_topo.edges[ebias];
     }
 
-    // halfedgeËùÔÚµÄface
+    // halfedgeæ‰€åœ¨çš„face
     FaceIndex face(Halfedge h) const
     {
         CellIndex c = h.he_cell;
@@ -723,13 +723,13 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
         return cell_topo.faces[fi];
     }
 
-    // halfedgeËùÔÚµÄcell
+    // halfedgeæ‰€åœ¨çš„cell
     CellIndex cell(Halfedge h) const
     {
         return h.he_cell;
     }
 
-    // halfedgeµÄºó¼Ì
+    // halfedgeçš„åç»§
     Halfedge next(Halfedge h) const
     {
         CellIndex& c = h.he_cell;
@@ -747,7 +747,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
             return Halfedge(c, off + 1);
     }
 
-    // halfedgeµÄÇ°Çı
+    // halfedgeçš„å‰é©±
     Halfedge prev(Halfedge h) const
     {
         CellIndex c = h.he_cell;
@@ -765,7 +765,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
             return Halfedge(c, off - 1);
     }
 
-    // polygon_mate: Ò»¸öcellÖĞ¹²±ßµÄĞÖµÜ°ë±ß
+    // polygon_mate: ä¸€ä¸ªcellä¸­å…±è¾¹çš„å…„å¼ŸåŠè¾¹
     Halfedge polygon_mate(Halfedge h) const
     {
         CellIndex c = h.he_cell;
@@ -779,17 +779,17 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
             if (i != off && (cell_topo.halfedges[i].second == ebias))
                 return Halfedge(c, i);
         }
-        assert(false); // Ö´ĞĞµ½´Ë´¦ËµÃ÷³öÏÖ´íÎó
+        assert(false); // æ‰§è¡Œåˆ°æ­¤å¤„è¯´æ˜å‡ºç°é”™è¯¯
     }
 
-    // polyhedron_mate: ¹²ÃæµÄcellÖĞ¹²±ßµÄĞÖµÜ°ë±ß.
-    // Note: polygon_mateÒ»¶¨´æÔÚ, µ«polyhedron_mate²»Ò»¶¨´æÔÚ.
+    // polyhedron_mate: å…±é¢çš„cellä¸­å…±è¾¹çš„å…„å¼ŸåŠè¾¹.
+    // Note: polygon_mateä¸€å®šå­˜åœ¨, ä½†polyhedron_mateä¸ä¸€å®šå­˜åœ¨.
     Halfedge polyhedron_mate(Halfedge h) const
     {
-        // step 1: ÕÒµ½halfedgeËùÔÚµÄÃæ 
+        // step 1: æ‰¾åˆ°halfedgeæ‰€åœ¨çš„é¢ 
         FaceIndex f = face(h);
 
-        // step 2: ½øÈëÁíÒ»¸öcell
+        // step 2: è¿›å…¥å¦ä¸€ä¸ªcell
         const FaceTopo& face_topo = ftopo[f];
 
         CellIndex c = h.he_cell;
@@ -798,15 +798,15 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
         CellIndex opp_c = (c == face_topo.incident_cells[0]) ?
             face_topo.incident_cells[1] : face_topo.incident_cells[0];
 
-        // ±ß½çÃæ, Ö»¼ÇÂ¼Ò»¸öcell, ÁíÒ»¸öÎª¿Õ.
+        // è¾¹ç•Œé¢, åªè®°å½•ä¸€ä¸ªcell, å¦ä¸€ä¸ªä¸ºç©º.
         if (opp_c == null_cell())
             return null_halfedge();
 
-        // ÕÒµ½fÔÚopp_cµÄfaces¶ÔÓ¦µÄË÷Òı.
+        // æ‰¾åˆ°fåœ¨opp_cçš„faceså¯¹åº”çš„ç´¢å¼•.
         size_type opp_fi = face_location_in_cell(f, opp_c);
         assert(opp_fi != std::numeric_limits<size_type>::max());
 
-        // step 3: opp_c.faces[opp_fi]°üº¬µÄ±ßÖĞ, ¼ÇÂ¼Í¬Ò»edgeµÄ¼´ÎªËùÒªÕÒµÄ½á¹û
+        // step 3: opp_c.faces[opp_fi]åŒ…å«çš„è¾¹ä¸­, è®°å½•åŒä¸€edgeçš„å³ä¸ºæ‰€è¦æ‰¾çš„ç»“æœ
         const CellTopo& opp_cell_topo = ctopo[opp_c];
         size_type fstart = opp_cell_topo.offset[opp_fi];
         size_type fend = opp_cell_topo.offset[opp_fi + 1];
@@ -819,10 +819,10 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
             if (e == target_edge)
                 return Halfedge(opp_c, i);
         }
-        assert(false); // Ö´ĞĞµ½´Ë´¦ËµÃ÷³öÏÖ´íÎó.
+        assert(false); // æ‰§è¡Œåˆ°æ­¤å¤„è¯´æ˜å‡ºç°é”™è¯¯.
     }
 
-    // Óëµã, ±ß, Ãæ, µ¥ÔªincidentµÄhalfedge.
+    // ä¸ç‚¹, è¾¹, é¢, å•å…ƒincidentçš„halfedge.
     // 'source(halfedge(v)) == v', not target.
     Halfedge halfedge(VertexIndex v) const { return vtopo[v].halfedge; }
     Halfedge halfedge(EdgeIndex e) const { return etopo[e].halfedge; }
@@ -852,8 +852,8 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
         return h.he_cell;
     }
 
-    // 01²éÑ¯: ºÍÒ»¸öµãincidentµÄËùÓĞ±ß
-    // »ù±¾Ë¼ÏëÊÇ, ¶Ô³õÊ¼cell, ÕÒµ½ÒÔvÎª¶¥µãµÄÄÇĞ©Ãæ, ¼ÌĞøËÑË÷ÕâĞ©ÃæµÄÏàÁÚcell, Ö±ÖÁÃ»ÓĞĞÂµÄcell
+    // 01æŸ¥è¯¢: å’Œä¸€ä¸ªç‚¹incidentçš„æ‰€æœ‰è¾¹
+    // åŸºæœ¬æ€æƒ³æ˜¯, å¯¹åˆå§‹cell, æ‰¾åˆ°ä»¥vä¸ºé¡¶ç‚¹çš„é‚£äº›é¢, ç»§ç»­æœç´¢è¿™äº›é¢çš„ç›¸é‚»cell, ç›´è‡³æ²¡æœ‰æ–°çš„cell
     //
     template <typename OutputIterator>
     void incident_edges(VertexIndex v, OutputIterator out) const
@@ -861,17 +861,17 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
         if (!is_valid(v))
             return;
 
-        std::vector<CellIndex> crecord; // È¥ÖØ
+        std::vector<CellIndex> crecord; // å»é‡
         crecord.push_back(cell(halfedge(v)));
         boost::container::flat_set<EdgeIndex> record;
 
-        for (int k = 0; k < crecord.size(); k++) //×¢Òâ, Ñ­»·ÖĞcrecordµÄsize¿ÉÄÜ»áÔö¼Ó
+        for (int k = 0; k < crecord.size(); k++) //æ³¨æ„, å¾ªç¯ä¸­crecordçš„sizeå¯èƒ½ä¼šå¢åŠ 
         {
             CellIndex c = crecord[k];
             const CellTopo& cell_topo = ctopo[c];
 
-            // cellÊÇwatertight Á÷ĞÎ, ÒÔvÎª¶ËµãµÄ(ÎïÀí)±ß, ÓĞÇÒ½öÓĞÒ»ÌõÒÔvÎªsourceµÄ°ë±ß;
-            // ËÑ³öcellÖĞÒÔvÎªsourceµÄËùÓĞ°ë±ß (i.e., incident faces of v)
+            // cellæ˜¯watertight æµå½¢, ä»¥vä¸ºç«¯ç‚¹çš„(ç‰©ç†)è¾¹, æœ‰ä¸”ä»…æœ‰ä¸€æ¡ä»¥vä¸ºsourceçš„åŠè¾¹;
+            // æœå‡ºcellä¸­ä»¥vä¸ºsourceçš„æ‰€æœ‰åŠè¾¹ (i.e., incident faces of v)
             for (size_type i = 0; i < cell_topo.halfedges.size(); ++i)
             {
                 bias_type vbias = cell_topo.halfedges[i].first;
@@ -881,17 +881,17 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
 
                 bias_type ebias = cell_topo.halfedges[i].second;
                 EdgeIndex ei = cell_topo.edges[ebias];
-                //Ö»ÒªcellÊÇwatertight ¿É¶¨ÏòµÄÁ÷ĞÎ, ¾Í²»»áÒÅÂ©Óëv incidentµÄ±ß;
+                //åªè¦cellæ˜¯watertight å¯å®šå‘çš„æµå½¢, å°±ä¸ä¼šé—æ¼ä¸v incidentçš„è¾¹;
                 record.insert(ei);
 
-                //µ±Ç°cellµÄÄ³¸öfaceµÄ°ë±ß sourceÎªv (¸Ã°ë±ßµÄ"Ç°Ğò"°ë±ßÒÔvÎªtarget)
+                //å½“å‰cellçš„æŸä¸ªfaceçš„åŠè¾¹ sourceä¸ºv (è¯¥åŠè¾¹çš„"å‰åº"åŠè¾¹ä»¥vä¸ºtarget)
                 FaceIndex f = face(Halfedge(c, i));
                 const FaceTopo& face_topo = ftopo[f];
                 assert(c == face_topo.incident_cells[0] || c == face_topo.incident_cells[1]);
                 CellIndex opp_cell = (c == face_topo.incident_cells[0]) ?
                     face_topo.incident_cells[1] : face_topo.incident_cells[0];
 
-                // Èôopp_cellºÏ·¨ÇÒÖ®Ç°Ã»ÓĞ±éÀú¹ı, ²åÈë.
+                // è‹¥opp_cellåˆæ³•ä¸”ä¹‹å‰æ²¡æœ‰éå†è¿‡, æ’å…¥.
                 if (is_valid(opp_cell) && std::find(crecord.begin(), crecord.end(), opp_cell) == crecord.end())
                     crecord.push_back(opp_cell);
             }
@@ -901,8 +901,8 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
             *out++ = e;
     }
 
-    // 02²éÑ¯: ºÍÒ»¸öµãincidentµÄËùÓĞÃæ
-    // Óë01²éÑ¯µÄË¼Â·ÀàËÆ
+    // 02æŸ¥è¯¢: å’Œä¸€ä¸ªç‚¹incidentçš„æ‰€æœ‰é¢
+    // ä¸01æŸ¥è¯¢çš„æ€è·¯ç±»ä¼¼
     template <typename OutputIterator>
     void incident_faces(VertexIndex v, OutputIterator out) const
     {
@@ -913,13 +913,13 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
         crecord.push_back(cell(halfedge(v)));
         boost::container::flat_set<FaceIndex> frecord;
 
-        for (int k = 0; k < crecord.size(); k++) //×¢Òâ,Ñ­»·ÖĞcrecordµÄsize¿ÉÄÜ»áÔö¼Ó
+        for (int k = 0; k < crecord.size(); k++) //æ³¨æ„,å¾ªç¯ä¸­crecordçš„sizeå¯èƒ½ä¼šå¢åŠ 
         {
             CellIndex c = crecord[k];
             const CellTopo& cell_topo = ctopo[c];
 
-            //cellÊÇwatertight Á÷ĞÎ, ÒÔvÎª¶ËµãµÄ(ÎïÀí)±ß,ÓĞÇÒ½öÓĞÒ»ÌõÒÔvÎªsourceµÄ°ë±ß;
-            //ËÑ³öcellÖĞÒÔvÎªsourceµÄËùÓĞ°ë±ß (i.e., incident faces of v)
+            //cellæ˜¯watertight æµå½¢, ä»¥vä¸ºç«¯ç‚¹çš„(ç‰©ç†)è¾¹,æœ‰ä¸”ä»…æœ‰ä¸€æ¡ä»¥vä¸ºsourceçš„åŠè¾¹;
+            //æœå‡ºcellä¸­ä»¥vä¸ºsourceçš„æ‰€æœ‰åŠè¾¹ (i.e., incident faces of v)
             for (size_type i = 0; i < cell_topo.halfedges.size(); ++i)
             {
                 bias_type vbias = cell_topo.halfedges[i].first;
@@ -935,7 +935,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
                 CellIndex opp_cell = (c == face_topo.incident_cells[0]) ?
                     face_topo.incident_cells[1] : face_topo.incident_cells[0];
 
-                // Èôopp_cellºÏ·¨ÇÒÖ®Ç°Ã»ÓĞ±éÀú¹ı, ²åÈë.
+                // è‹¥opp_cellåˆæ³•ä¸”ä¹‹å‰æ²¡æœ‰éå†è¿‡, æ’å…¥.
                 if (is_valid(opp_cell) && std::find(crecord.begin(), crecord.end(), opp_cell) == crecord.end())
                     crecord.push_back(opp_cell);
             }
@@ -945,7 +945,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
             *out++ = face;
     }
 
-    // 03²éÑ¯: ºÍÒ»¸öµãincidentµÄËùÓĞµ¥Ôª
+    // 03æŸ¥è¯¢: å’Œä¸€ä¸ªç‚¹incidentçš„æ‰€æœ‰å•å…ƒ
     template <typename OutputIterator>
     void incident_cells(VertexIndex v, OutputIterator out)
     {
@@ -955,13 +955,13 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
         std::vector<CellIndex> crecord;
         crecord.push_back(cell(halfedge(v)));
 
-        for (int k = 0; k < crecord.size(); k++) //×¢Òâ,Ñ­»·ÖĞcrecordµÄsize¿ÉÄÜ»áÔö¼ÓµÄ
+        for (int k = 0; k < crecord.size(); k++) //æ³¨æ„,å¾ªç¯ä¸­crecordçš„sizeå¯èƒ½ä¼šå¢åŠ çš„
         {
             CellIndex c = crecord[k];
             const CellTopo& cell_topo = ctopo[c];
 
-            //cellÊÇwatertight Á÷ĞÎ, ÒÔvÎª¶ËµãµÄ(ÎïÀí)±ß,ÓĞÇÒ½öÓĞÒ»ÌõÒÔvÎªsourceµÄ°ë±ß;
-            //ËÑ³öcellÖĞÒÔvÎªsourceµÄËùÓĞ°ë±ß (i.e., incident faces of v)
+            //cellæ˜¯watertight æµå½¢, ä»¥vä¸ºç«¯ç‚¹çš„(ç‰©ç†)è¾¹,æœ‰ä¸”ä»…æœ‰ä¸€æ¡ä»¥vä¸ºsourceçš„åŠè¾¹;
+            //æœå‡ºcellä¸­ä»¥vä¸ºsourceçš„æ‰€æœ‰åŠè¾¹ (i.e., incident faces of v)
             for (size_type i = 0; i < cell_topo.halfedges.size(); ++i)
             {
                 bias_type vbias = cell_topo.halfedges[i].first;
@@ -974,7 +974,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
                 CellIndex opp_cell = (c == face_topo.incident_cells[0]) ?
                     face_topo.incident_cells[1] : face_topo.incident_cells[0];
 
-                // Èôopp_cellºÏ·¨ÇÒÖ®Ç°Ã»ÓĞ±éÀú¹ı, ²åÈë.
+                // è‹¥opp_cellåˆæ³•ä¸”ä¹‹å‰æ²¡æœ‰éå†è¿‡, æ’å…¥.
                 if (is_valid(opp_cell) && std::find(crecord.begin(), crecord.end(), opp_cell) == crecord.end())
                     crecord.push_back(opp_cell);
             }
@@ -984,7 +984,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
             *out++ = c;
     }
 
-    // 10²éÑ¯: ºÍÒ»Ìõ±ßincidentµÄËùÓĞµã
+    // 10æŸ¥è¯¢: å’Œä¸€æ¡è¾¹incidentçš„æ‰€æœ‰ç‚¹
     template <typename OutputIterator>
     void incident_vertices(EdgeIndex e, OutputIterator out) const
     {
@@ -996,8 +996,8 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
         *out++ = target(h);
     }
 
-    // 12²éÑ¯: ºÍÒ»Ìõ±ßincidentµÄËùÓĞÃæ
-    // Ê®×ÖĞÎµÄÌØÊâÇé¿öÄ¿Ç°ÎŞ·¨´¦Àí
+    // 12æŸ¥è¯¢: å’Œä¸€æ¡è¾¹incidentçš„æ‰€æœ‰é¢
+    // åå­—å½¢çš„ç‰¹æ®Šæƒ…å†µç›®å‰æ— æ³•å¤„ç†
     template <typename OutputIterator>
     void incident_faces(EdgeIndex e, OutputIterator out) const
     {
@@ -1007,7 +1007,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
         Halfedge h = halfedge(e);
         Halfedge start(h);
 
-        // ÎªÁËÓ¦¶ÔcellÃ»ÓĞÎ§³ÉÒ»È¦µÄÇé¿ö(ÉÈĞÎ), ĞèÒªÁ½¸ö·½Ïò¶¼ËÑÒ»´Î.
+        // ä¸ºäº†åº”å¯¹cellæ²¡æœ‰å›´æˆä¸€åœˆçš„æƒ…å†µ(æ‰‡å½¢), éœ€è¦ä¸¤ä¸ªæ–¹å‘éƒ½æœä¸€æ¬¡.
         std::vector<FaceIndex> record;
         record.push_back(face(h));
         do {
@@ -1016,9 +1016,9 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
             h = polyhedron_mate(h);
         } while (h != start && h != null_halfedge());
 
-        if (h == start) //»Øµ½start, ËµÃ÷²»ÊÇÉÈĞÎµÄÇé¿ö, ´ËÊ±record.back()==record.front(), ĞèÒªÉ¾µôÒ»¸ö.
+        if (h == start) //å›åˆ°start, è¯´æ˜ä¸æ˜¯æ‰‡å½¢çš„æƒ…å†µ, æ­¤æ—¶record.back()==record.front(), éœ€è¦åˆ æ‰ä¸€ä¸ª.
             record.pop_back();
-        else // ËµÃ÷ËÑË÷µ½´ï±ß½ç, ĞèÒª»»¸ö·½Ïò
+        else // è¯´æ˜æœç´¢åˆ°è¾¾è¾¹ç•Œ, éœ€è¦æ¢ä¸ªæ–¹å‘
         {
             h = polyhedron_mate(start);
             while (h != null_halfedge())
@@ -1033,7 +1033,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
             *out++ = f;
     }
 
-    // 13²éÑ¯: ºÍÒ»Ìõ±ßincidentµÄËùÓĞµ¥Ôª
+    // 13æŸ¥è¯¢: å’Œä¸€æ¡è¾¹incidentçš„æ‰€æœ‰å•å…ƒ
     template <typename OutputIterator>
     void incident_cells(EdgeIndex e, OutputIterator out) const
     {
@@ -1049,7 +1049,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
             h = polyhedron_mate(polygon_mate(h));
         } while (h != start && h != null_halfedge());
 
-        if (h != start) // ËµÃ÷ËÑË÷µ½´ï±ß½ç, ĞèÒª»»¸ö·½Ïò
+        if (h != start) // è¯´æ˜æœç´¢åˆ°è¾¾è¾¹ç•Œ, éœ€è¦æ¢ä¸ªæ–¹å‘
         {
             h = polyhedron_mate(start);
             while (h != null_halfedge())
@@ -1063,7 +1063,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
             *out++ = c;
     }
 
-    // 20²éÑ¯: ºÍÒ»¸öÃæincidentµÄËùÓĞµã
+    // 20æŸ¥è¯¢: å’Œä¸€ä¸ªé¢incidentçš„æ‰€æœ‰ç‚¹
     template <typename OutputIterator>
     void incident_vertices(FaceIndex f, OutputIterator out) const
     {
@@ -1088,7 +1088,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
         }
     }
 
-    // 21²éÑ¯: ºÍÒ»¸öÃæincidentµÄËùÓĞ±ß
+    // 21æŸ¥è¯¢: å’Œä¸€ä¸ªé¢incidentçš„æ‰€æœ‰è¾¹
     template <typename OutputIterator>
     void incident_edges(FaceIndex f, OutputIterator out) const
     {
@@ -1112,7 +1112,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
         }
     }
 
-    // 23²éÑ¯: ºÍÒ»¸öÃæincidentµÄËùÓĞµ¥Ôª
+    // 23æŸ¥è¯¢: å’Œä¸€ä¸ªé¢incidentçš„æ‰€æœ‰å•å…ƒ
     template <typename OutputIterator>
     void incident_cells(FaceIndex f, OutputIterator out) const
     {
@@ -1127,7 +1127,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
         }
     }
 
-    // 30²éÑ¯: ºÍÒ»¸öµ¥ÔªincidentµÄËùÓĞµã
+    // 30æŸ¥è¯¢: å’Œä¸€ä¸ªå•å…ƒincidentçš„æ‰€æœ‰ç‚¹
     template <typename OutputIterator>
     void incident_vertices(CellIndex c, OutputIterator out) const
     {
@@ -1138,7 +1138,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
             *out++ = v;
     }
 
-    // 31²éÑ¯: ºÍÒ»¸öµ¥ÔªincidentµÄËùÓĞ±ß
+    // 31æŸ¥è¯¢: å’Œä¸€ä¸ªå•å…ƒincidentçš„æ‰€æœ‰è¾¹
     template <typename OutputIterator>
     void incident_edges(CellIndex c, OutputIterator out) const
     {
@@ -1149,7 +1149,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
             *out++ = e;
     }
 
-    // 32²éÑ¯: ºÍÒ»¸öµ¥ÔªincidentµÄËùÓĞÃæ
+    // 32æŸ¥è¯¢: å’Œä¸€ä¸ªå•å…ƒincidentçš„æ‰€æœ‰é¢
     template <typename OutputIterator>
     void incident_faces(CellIndex c, OutputIterator out) const
     {
@@ -1160,7 +1160,7 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
             *out++ = f;
     }
 
-    // Ò»¸öÃæÉÏµÄÒ»È¦°ë±ß. ×¢Òâ, cell²»Í¬, f¶ÔÓ¦µÄ°ë±ßÒ²²»Í¬.
+    // ä¸€ä¸ªé¢ä¸Šçš„ä¸€åœˆåŠè¾¹. æ³¨æ„, cellä¸åŒ, få¯¹åº”çš„åŠè¾¹ä¹Ÿä¸åŒ.
     template <typename OutputIterator>
     void halfedges_around_face(FaceIndex f, CellIndex c, OutputIterator out) const
     {
@@ -1176,9 +1176,9 @@ public: /*-------------------- ÍØÆË²éÑ¯Ïà¹ØÊµÏÖ ------------------------*/
     }
 
 
-public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
+public: /*------------------- æ‹“æ‰‘ä¿®æ”¹çš„ç›¸å…³å‡½æ•° ---------------------------*/
 
-    // ÅĞ¶ÏÒ»¸öÃæÊÇ·ñÎªÈı½ÇĞÎÃæ.
+    // åˆ¤æ–­ä¸€ä¸ªé¢æ˜¯å¦ä¸ºä¸‰è§’å½¢é¢.
     bool is_triangle(FaceIndex f)
     {
         CellIndex c = cell(f);
@@ -1191,13 +1191,13 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
         return point_num == 3;
     }
 
-    // TODO: É¾³ıfaceµÄÊ±ºòÈç¹ûÏà¹ØµÄµãºÍ±ß²»ÔÙÊ¹ÓÃ, Ó¦¸ÃÉ¾³ı, ĞÔÄÜ¸üÓÅ.
-    // ´ÓcellµÄÍØÆËÖĞÉ¾³ıÒ»¸öÃæ, ²¢Î¬»¤ÍØÆËÕıÈ·.
+    // TODO: åˆ é™¤faceçš„æ—¶å€™å¦‚æœç›¸å…³çš„ç‚¹å’Œè¾¹ä¸å†ä½¿ç”¨, åº”è¯¥åˆ é™¤, æ€§èƒ½æ›´ä¼˜.
+    // ä»cellçš„æ‹“æ‰‘ä¸­åˆ é™¤ä¸€ä¸ªé¢, å¹¶ç»´æŠ¤æ‹“æ‰‘æ­£ç¡®.
     void remove_face_from_cell(FaceIndex f, CellIndex c)
     {
         CellTopo& cell_topo = ctopo[c];
 
-        // ÕÒµ½fµÄÎ»ÖÃ.
+        // æ‰¾åˆ°fçš„ä½ç½®.
         size_type fi = face_location_in_cell(f, c);
         assert(fi != std::numeric_limits<size_type>::max());
 
@@ -1205,16 +1205,16 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
         size_type fend = cell_topo.offset[fi + 1];
         size_type vertex_num = fend - fbegin;
 
-        // faces, offset, halfedgesÉ¾³ıÏà¹ØÔªËØ, verticesºÍedgesÎŞĞèĞŞ¸Ä, ÒòÎª²»»áÉÙÈÎºÎµãºÍ±ß.
-        // 1) facesÊı×é
+        // faces, offset, halfedgesåˆ é™¤ç›¸å…³å…ƒç´ , verticeså’Œedgesæ— éœ€ä¿®æ”¹, å› ä¸ºä¸ä¼šå°‘ä»»ä½•ç‚¹å’Œè¾¹.
+        // 1) facesæ•°ç»„
         cell_topo.faces.erase(cell_topo.faces.begin() + fi);
-        // 2) offsetÊı×é
-        // 2.1) É¾³ıÔªËØ
+        // 2) offsetæ•°ç»„
+        // 2.1) åˆ é™¤å…ƒç´ 
         cell_topo.offset.erase(cell_topo.offset.begin() + fi);
         for (size_type i = fi; i < cell_topo.offset.size(); ++i)
             cell_topo.offset[i] -= vertex_num;
 
-        // 2.2) ĞŞ¸ÄfaceµÄÍØÆË(ÒªÉ¾³ıµÄf²»¸Ä, fÖ®ºóµÄÒª¸Ä).
+        // 2.2) ä¿®æ”¹faceçš„æ‹“æ‰‘(è¦åˆ é™¤çš„fä¸æ”¹, fä¹‹åçš„è¦æ”¹).
         for (size_type i = fi; i < cell_topo.faces.size(); ++i)
         {
             FaceIndex f_ = cell_topo.faces[i];
@@ -1222,13 +1222,13 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
                 ftopo[f_].halfedge = Halfedge(c, cell_topo.offset[i]);
         }
 
-        // 3) halfedgesÊı×é
-        // 3.1) É¾³ıÔªËØ
+        // 3) halfedgesæ•°ç»„
+        // 3.1) åˆ é™¤å…ƒç´ 
         cell_topo.halfedges.erase(cell_topo.halfedges.begin() + fbegin, cell_topo.halfedges.begin() + fend);
-        // 3.2) ĞŞ¸ÄÍØÆË
-        // vertex, edgeµÄÍØÆËÖĞ»á¼ÇÂ¼halfedge, ÈôhalfedgeÊÇ±¾cellÖĞµÄ,
-        // ÓÉÓÚhalfedgesÉ¾³ıÁËÔªËØ, Æ«ÒÆÖµÒÑ¾­²»ÔÙÕıÈ·, ĞèÒª¸üĞÂËüÃÇµÄÍØÆË.
-        boost::container::flat_set<VertexIndex> vmodified; // È¥ÖØ
+        // 3.2) ä¿®æ”¹æ‹“æ‰‘
+        // vertex, edgeçš„æ‹“æ‰‘ä¸­ä¼šè®°å½•halfedge, è‹¥halfedgeæ˜¯æœ¬cellä¸­çš„,
+        // ç”±äºhalfedgesåˆ é™¤äº†å…ƒç´ , åç§»å€¼å·²ç»ä¸å†æ­£ç¡®, éœ€è¦æ›´æ–°å®ƒä»¬çš„æ‹“æ‰‘.
+        boost::container::flat_set<VertexIndex> vmodified; // å»é‡
         boost::container::flat_set<EdgeIndex> emodified;
 
         for (size_type i = 0; i < cell_topo.halfedges.size(); ++i)
@@ -1236,8 +1236,8 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
             bias_type vbias = cell_topo.halfedges[i].first;
             VertexIndex v = cell_topo.vertices[vbias];
             Halfedge vh = halfedge(v);
-            // ½öµ±vhÖ¸Ïò±¾cell, Ë÷ÒıÎ»ÖÃÔÚfbeginÖ®ºó, 
-            // ÇÒÊÇµÚÒ»´ÎĞŞ¸Ä(vÔÚhalfedegsÖĞ²»Ö¹Ò»¸ö), ²Å»áĞŞ¸Ä.
+            // ä»…å½“vhæŒ‡å‘æœ¬cell, ç´¢å¼•ä½ç½®åœ¨fbeginä¹‹å, 
+            // ä¸”æ˜¯ç¬¬ä¸€æ¬¡ä¿®æ”¹(våœ¨halfedegsä¸­ä¸æ­¢ä¸€ä¸ª), æ‰ä¼šä¿®æ”¹.
             if (cell(vh) == c && !vmodified.count(v))
             {
                 vtopo[v].halfedge = Halfedge(c, i);
@@ -1247,7 +1247,7 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
             bias_type ebias = cell_topo.halfedges[i].second;
             EdgeIndex e = cell_topo.edges[ebias];
             Halfedge eh = halfedge(e);
-            // Í¬Àí
+            // åŒç†
             if (cell(eh) == c && !emodified.count(e))
             {
                 etopo[e].halfedge = Halfedge(c, i);
@@ -1256,16 +1256,16 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
         }
     }
 
-    // ½«Ò»¸öface¼ÓÈëcellÍØÆËÖĞ²¢Î¬»¤ÍØÆËÕıÈ·.
-    // bool±äÁ¿±êÃ÷ÊÇÔÚ±¾cell»¹ÊÇoppo_cellÌí¼Ó, ÓÉÓÚf_vseq¶ÔÓ¦µÄÊÇ±¾cell,
-    // ËùÒÔÔÚoppo_cellÖĞÌí¼ÓÓ¦¸Ã½«ĞıÏò·´Ò»ÏÂ.
+    // å°†ä¸€ä¸ªfaceåŠ å…¥cellæ‹“æ‰‘ä¸­å¹¶ç»´æŠ¤æ‹“æ‰‘æ­£ç¡®.
+    // boolå˜é‡æ ‡æ˜æ˜¯åœ¨æœ¬cellè¿˜æ˜¯oppo_cellæ·»åŠ , ç”±äºf_vseqå¯¹åº”çš„æ˜¯æœ¬cell,
+    // æ‰€ä»¥åœ¨oppo_cellä¸­æ·»åŠ åº”è¯¥å°†æ—‹å‘åä¸€ä¸‹.
     void add_triangle_to_cell(FaceIndex f,
                               CellIndex c,
                               std::vector<VertexIndex>& f_vseq,
                               std::map<SortedPair<VertexIndex>, EdgeIndex>& endpoint_to_edge,
                               bool use_reverse_order)
     {
-        // ÒªÊµÏÖµÄĞ§¹û: [0,1,2,3]->[0,3,2,1]
+        // è¦å®ç°çš„æ•ˆæœ: [0,1,2,3]->[0,3,2,1]
         if (use_reverse_order)
             std::reverse(f_vseq.begin() + 1, f_vseq.end());
 
@@ -1273,18 +1273,18 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
         if (cell_topo.faces.size() == 0)
             cell_topo.offset[0] = 0;
 
-        // 1) facesÊı×é
+        // 1) facesæ•°ç»„
         cell_topo.faces.push_back(f);
-        // 2) offsetÊı×é
+        // 2) offsetæ•°ç»„
         size_type fstart = cell_topo.offset.back();
-        cell_topo.offset.push_back(fstart + 3); // Èı½ÇĞÎ, ¹Ì¶¨¼Ó3¼´¿É.
-        // 3) halfedgesÊı×é
-        // global indexÓëlocal indexµÄÓ³Éä¹ØÏµ, È¥ÖØ.
+        cell_topo.offset.push_back(fstart + 3); // ä¸‰è§’å½¢, å›ºå®šåŠ 3å³å¯.
+        // 3) halfedgesæ•°ç»„
+        // global indexä¸local indexçš„æ˜ å°„å…³ç³», å»é‡.
         std::map<VertexIndex, bias_type> vlocation;
         std::map<EdgeIndex, bias_type> elocation;
 
-        // Note: Çë×¢Òâ, ÓÉÓÚ¶àÃæÌåÍø¸ñÒ»¸öcell°üº¬µÄµãºÍ±ßµÄÊıÄ¿ÓÉbias_typeµÄÊı¾İ¿í¶È¾ö¶¨,
-        // Òò´ËÔÚÌí¼ÓÊ±±ØĞë¼ÓÈë´Ëassert, ÒÔ±ã¼°Ê±±¨¸æ.
+        // Note: è¯·æ³¨æ„, ç”±äºå¤šé¢ä½“ç½‘æ ¼ä¸€ä¸ªcellåŒ…å«çš„ç‚¹å’Œè¾¹çš„æ•°ç›®ç”±bias_typeçš„æ•°æ®å®½åº¦å†³å®š,
+        // å› æ­¤åœ¨æ·»åŠ æ—¶å¿…é¡»åŠ å…¥æ­¤assert, ä»¥ä¾¿åŠæ—¶æŠ¥å‘Š.
         for (bias_type i = 0; i < cell_topo.vertices.size(); ++i)
         {
             vlocation.insert(std::make_pair(cell_topo.vertices[i], i));
@@ -1296,7 +1296,7 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
             assert(cell_topo.edges.size() < std::numeric_limits<bias_type>::max());
         }
 
-        // ÒÑÓĞµÄvertexºÍedgeµÄÍØÆË²»ĞèÒªµ÷Õû, ĞÂÔöµÄĞèÒªµ÷Õû.
+        // å·²æœ‰çš„vertexå’Œedgeçš„æ‹“æ‰‘ä¸éœ€è¦è°ƒæ•´, æ–°å¢çš„éœ€è¦è°ƒæ•´.
         for (std::size_t k = 0; k < 3; ++k)
         {
             VertexIndex v = f_vseq[k];
@@ -1307,7 +1307,7 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
                 cell_topo.vertices.push_back(v);
                 vlocation.insert(std::make_pair(v, vbias));
 
-                // Ö»ÔÚ±¾cellÌí¼ÓfaceÊ±µ÷ÕûÍØÆË, oppo_cellÌí¼ÓÊ±²»µ÷Õû.
+                // åªåœ¨æœ¬cellæ·»åŠ faceæ—¶è°ƒæ•´æ‹“æ‰‘, oppo_cellæ·»åŠ æ—¶ä¸è°ƒæ•´.
                 if (!use_reverse_order)
                     vtopo[v].halfedge = Halfedge(c, fstart + k);
             }
@@ -1318,13 +1318,13 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
             assert(endpoint_to_edge.count(vpair));
             EdgeIndex e = endpoint_to_edge[vpair];
             bias_type ebias;
-            if (!elocation.count(e))    // ËµÃ÷ÊÇĞÂµÄ±ß
+            if (!elocation.count(e))    // è¯´æ˜æ˜¯æ–°çš„è¾¹
             {
                 ebias = cell_topo.edges.size();
                 cell_topo.edges.push_back(e);
                 elocation.insert(std::make_pair(e, ebias));
 
-                // Ö»ÔÚ±¾cellÌí¼ÓfaceÊ±µ÷ÕûÍØÆË, oppo_cellÌí¼ÓÊ±²»µ÷Õû.
+                // åªåœ¨æœ¬cellæ·»åŠ faceæ—¶è°ƒæ•´æ‹“æ‰‘, oppo_cellæ·»åŠ æ—¶ä¸è°ƒæ•´.
                 if (!use_reverse_order)
                     etopo[e].halfedge = Halfedge(c, fstart + k);
             }
@@ -1334,8 +1334,8 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
             cell_topo.halfedges.push_back(std::make_pair(vbias, ebias));
         }
 
-        // µ÷ÕûfaceµÄÍØÆË.
-        // Ö»ÔÚ±¾cellÌí¼ÓfaceÊ±ÉèÖÃhalfedge, oppo_cellÌí¼ÓÊ±²»µ÷Õû.
+        // è°ƒæ•´faceçš„æ‹“æ‰‘.
+        // åªåœ¨æœ¬cellæ·»åŠ faceæ—¶è®¾ç½®halfedge, oppo_cellæ·»åŠ æ—¶ä¸è°ƒæ•´.
         FaceTopo& face_topo = ftopo[f];
         if (!use_reverse_order)
         {
@@ -1346,14 +1346,14 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
             face_topo.incident_cells[1] = c;
     }
 
-    // Ê¹ÓÃ·ÖÖÎ²ßÂÔ½«Ò»¸ö¿Õ¼ä¶à±ßĞÎÃæÈı½Ç»¯.
-    // Input: ÃæµÄµãĞòÁĞpolygon, °´ÄæÊ±ÕëË³ĞòÅÅÁĞ.
-    // Output: Èı½Ç»¯ºóµÄËùÓĞµãĞòÁĞtriangles, ÒÀÈ»°´ÄæÊ±ÕëÅÅÁĞ.
+    // ä½¿ç”¨åˆ†æ²»ç­–ç•¥å°†ä¸€ä¸ªç©ºé—´å¤šè¾¹å½¢é¢ä¸‰è§’åŒ–.
+    // Input: é¢çš„ç‚¹åºåˆ—polygon, æŒ‰é€†æ—¶é’ˆé¡ºåºæ’åˆ—.
+    // Output: ä¸‰è§’åŒ–åçš„æ‰€æœ‰ç‚¹åºåˆ—triangles, ä¾ç„¶æŒ‰é€†æ—¶é’ˆæ’åˆ—.
     // 
-    // ´óÌåË¼Â·ÊÇ, ¶ÔÓÚµãĞòÁĞ(V0 V1 ...Vi... Vn), V0ºÍV1Î¨Ò»È·¶¨Ò»Ìõ±ß, 
-    // ÔÚV2~VnÖĞÕÒ³öÏà¶ÔÓÚÕâÌõ±ßÕÅ½Ç×î´óµÄµãVi, 
-    // ´ËÊ±½«µãĞòÁĞ·Ö³ÉÁËÈı²¿·Ö£ºleft_polygon, right_polygon, Èı½ÇĞÎ(V0, V1, Vi)
-    // Èı½ÇĞÎ(V0, V1, Vi)²åÈëtrianglesÖĞ, left_polygonºÍright_polygon¼ÌĞøÈı½Ç»¯.
+    // å¤§ä½“æ€è·¯æ˜¯, å¯¹äºç‚¹åºåˆ—(V0 V1 ...Vi... Vn), V0å’ŒV1å”¯ä¸€ç¡®å®šä¸€æ¡è¾¹, 
+    // åœ¨V2~Vnä¸­æ‰¾å‡ºç›¸å¯¹äºè¿™æ¡è¾¹å¼ è§’æœ€å¤§çš„ç‚¹Vi, 
+    // æ­¤æ—¶å°†ç‚¹åºåˆ—åˆ†æˆäº†ä¸‰éƒ¨åˆ†ï¼šleft_polygon, right_polygon, ä¸‰è§’å½¢(V0, V1, Vi)
+    // ä¸‰è§’å½¢(V0, V1, Vi)æ’å…¥trianglesä¸­, left_polygonå’Œright_polygonç»§ç»­ä¸‰è§’åŒ–.
     //
     bool triangulation(std::vector<VertexIndex>& polygon,
                        std::vector<std::vector<VertexIndex>>& triangle_faces)
@@ -1361,7 +1361,7 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
         std::size_t point_num = polygon.size();
         assert(point_num > 2);
 
-        // µİ¹é±ß½ç
+        // é€’å½’è¾¹ç•Œ
         if (point_num == 3)
         {
             triangle_faces.push_back(polygon);
@@ -1370,17 +1370,17 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
 
         typedef typename Kernel::FT  FT;
 
-        // ×î´óÕÅ½ÇºÍÆä¶ÔÓ¦µÄvertexÔÚpolygonÖĞµÄË÷Òı
+        // æœ€å¤§å¼ è§’å’Œå…¶å¯¹åº”çš„vertexåœ¨polygonä¸­çš„ç´¢å¼•
         FT max_angle = std::numeric_limits<FT>::min();
         std::size_t max_idx = std::numeric_limits<std::size_t>::max();
 
-        // Çó×î´óÕÅ½Ç
+        // æ±‚æœ€å¤§å¼ è§’
         Point p0 = point(polygon[0]);
         Point p1 = point(polygon[1]);
         for (std::size_t i = 2; i < point_num; ++i)
         {
             Point pi = point(polygon[i]);
-            FT angle = CGAL::approximate_angle(p0, pi, p1);  // ¼ÆËãp0-pi-p1µÄ½Ç¶È, ·µ»ØµÄÊÇ½Ç¶ÈÖµ²»ÊÇ»¡¶ÈÖµ.
+            FT angle = CGAL::approximate_angle(p0, pi, p1);  // è®¡ç®—p0-pi-p1çš„è§’åº¦, è¿”å›çš„æ˜¯è§’åº¦å€¼ä¸æ˜¯å¼§åº¦å€¼.
             if (angle > max_angle)
             {
                 max_angle = angle;
@@ -1391,7 +1391,7 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
         assert(max_idx != std::numeric_limits<std::size_t>::max() && max_idx < point_num);
         bool is_sucess = true;
 
-        // ×î´óÕÅ½Ç¶ÔÓ¦Ò»¸öÈı½ÇĞÎ
+        // æœ€å¤§å¼ è§’å¯¹åº”ä¸€ä¸ªä¸‰è§’å½¢
         triangle_faces.push_back({ polygon[0],polygon[1],polygon[max_idx] });
 
         // left
@@ -1419,11 +1419,11 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
         return is_sucess;
     }
 
-    // ½«Ò»¸öÃæÈı½Ç»¯ºó, ½«Èı½Ç»¯µÄ½á¹ûµ¼Èë¶àÃæÌåÍø¸ñ, Í¬Ê±ĞŞ¸ÄÍØÆË.
+    // å°†ä¸€ä¸ªé¢ä¸‰è§’åŒ–å, å°†ä¸‰è§’åŒ–çš„ç»“æœå¯¼å…¥å¤šé¢ä½“ç½‘æ ¼, åŒæ—¶ä¿®æ”¹æ‹“æ‰‘.
     // 
-    // @param original_face: ±»Èı½Ç»¯µÄÃæ, ĞèÒª´Ó¹ØÁªcellÖĞÉ¾³ı.
-    // @param f_to_vseq: Èı½Ç»¯ºóÃæÓëµãĞòÁĞµÄ¶ÔÓ¦¹ØÏµ.
-    // @param endpoint_to_edge: ÎïÀí±ßÓë¶ËµãµÄ¶ÔÓ¦¹ØÏµ.
+    // @param original_face: è¢«ä¸‰è§’åŒ–çš„é¢, éœ€è¦ä»å…³è”cellä¸­åˆ é™¤.
+    // @param f_to_vseq: ä¸‰è§’åŒ–åé¢ä¸ç‚¹åºåˆ—çš„å¯¹åº”å…³ç³».
+    // @param endpoint_to_edge: ç‰©ç†è¾¹ä¸ç«¯ç‚¹çš„å¯¹åº”å…³ç³».
     //
     void import_triangulation_info(FaceIndex original_face,
                                    std::unordered_map<FaceIndex, std::vector<VertexIndex>>& f_to_vseq,
@@ -1440,13 +1440,13 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
             remove_face_from_cell(original_face, opp_c);
 
         // Note:
-        // É¾³ıfaceºó, vertexºÍedgeµÄÍØÆË¶¼ÒÑ¾­µ÷ÕûÕıÈ·, µ«original_faceµÄÍØÆËÈÔ±£ÁôÔ­À´µÄÖµ, 
-        // ÕâĞ©ÖµÊÇ´íÎóµÄ, µ«ÓÉÓÚfaceÃ»ÓĞ¼ÓÈëcell, ËùÒÔÔİÊ±ÎŞ·¨µ÷ÕûÍØÆË, 
-        // ±ØĞëÔÚ¼ÓÈëÃæÖ®ºó¸ü¸Ä, ·ñÔò»áÒıÆğÍØÆË´íÎó.
+        // åˆ é™¤faceå, vertexå’Œedgeçš„æ‹“æ‰‘éƒ½å·²ç»è°ƒæ•´æ­£ç¡®, ä½†original_faceçš„æ‹“æ‰‘ä»ä¿ç•™åŸæ¥çš„å€¼, 
+        // è¿™äº›å€¼æ˜¯é”™è¯¯çš„, ä½†ç”±äºfaceæ²¡æœ‰åŠ å…¥cell, æ‰€ä»¥æš‚æ—¶æ— æ³•è°ƒæ•´æ‹“æ‰‘, 
+        // å¿…é¡»åœ¨åŠ å…¥é¢ä¹‹åæ›´æ”¹, å¦åˆ™ä¼šå¼•èµ·æ‹“æ‰‘é”™è¯¯.
         fprops.reset(static_cast<std::size_t>(original_face));
 
-        // ½«Èı½Ç»¯ºóµÄÈô¸ÉÈı½ÇĞÎ²åÈëµ½Ô­Ê¼Ãæ¹ØÁªµÄÁ½¸öcellµÄÍØÆËÖĞ²¢Î¬»¤ÍØÆËÕıÈ·.
-        // Note: original_faceÔÚcÖĞµÄĞıÏò±£Ö¤Ãæ³¯Íâ, ÔÚopp_cÖĞÓ¦µ±°ÑĞıÏò·´Ò»ÏÂ.
+        // å°†ä¸‰è§’åŒ–åçš„è‹¥å¹²ä¸‰è§’å½¢æ’å…¥åˆ°åŸå§‹é¢å…³è”çš„ä¸¤ä¸ªcellçš„æ‹“æ‰‘ä¸­å¹¶ç»´æŠ¤æ‹“æ‰‘æ­£ç¡®.
+        // Note: original_faceåœ¨cä¸­çš„æ—‹å‘ä¿è¯é¢æœå¤–, åœ¨opp_cä¸­åº”å½“æŠŠæ—‹å‘åä¸€ä¸‹.
         typename std::unordered_map<FaceIndex, std::vector<VertexIndex>>::iterator it = f_to_vseq.begin();
         for (; it != f_to_vseq.end(); ++it)
         {
@@ -1456,7 +1456,7 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
         }
     }
 
-    // ½«Ò»¸ö¿Õ¼ä¶à±ßĞÎÃæÈı½Ç»¯, ÔÚ´Ë¹ı³ÌÖĞÎ¬»¤ÍØÆËÕıÈ·, ·µ»Ø¶à±ßĞÎÈı½Ç»¯ºóµÄËùÓĞÃæ.
+    // å°†ä¸€ä¸ªç©ºé—´å¤šè¾¹å½¢é¢ä¸‰è§’åŒ–, åœ¨æ­¤è¿‡ç¨‹ä¸­ç»´æŠ¤æ‹“æ‰‘æ­£ç¡®, è¿”å›å¤šè¾¹å½¢ä¸‰è§’åŒ–åçš„æ‰€æœ‰é¢.
     template <typename OutputIterator>
     void triangulate_a_polygon(FaceIndex f_split, OutputIterator out)
     {
@@ -1471,24 +1471,24 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
 
         std::vector<std::vector<VertexIndex>> triangle_faces;
 
-        // Step1 Í¨¹ıÈı½Ç»¯, ½«Ô­Ê¼µÄ¶à±ßĞÎµãĞòÁĞ·ÖÁÑ³ÉÈô¸ÉÈı½ÇĞÎµÄµãĞòÁĞ(¶¼ÊÇÄæÊ±Õë)
+        // Step1 é€šè¿‡ä¸‰è§’åŒ–, å°†åŸå§‹çš„å¤šè¾¹å½¢ç‚¹åºåˆ—åˆ†è£‚æˆè‹¥å¹²ä¸‰è§’å½¢çš„ç‚¹åºåˆ—(éƒ½æ˜¯é€†æ—¶é’ˆ)
         if (!triangulation(f_vertices, triangle_faces))
             assert(false);
 
-        // Step2 triangle_facesÖĞµÄµãĞòÁĞ¶ÔÓ¦Ò»¸öface, µãĞòÁĞÏàÁÚµÄÁ½¸öµã¶ÔÓ¦Ò»Ìõedge, 
-        // ÎÒÃÇĞèÒª½¨Á¢ÆğÕâÖÖ¶ÔÓ¦¹ØÏµ, ±ØÒªÊ±add_face, add_edge.
+        // Step2 triangle_facesä¸­çš„ç‚¹åºåˆ—å¯¹åº”ä¸€ä¸ªface, ç‚¹åºåˆ—ç›¸é‚»çš„ä¸¤ä¸ªç‚¹å¯¹åº”ä¸€æ¡edge, 
+        // æˆ‘ä»¬éœ€è¦å»ºç«‹èµ·è¿™ç§å¯¹åº”å…³ç³», å¿…è¦æ—¶add_face, add_edge.
         std::vector<EdgeIndex> f_edges;
         incident_edges(f_split, std::back_inserter(f_edges));
 
         assert(f_vertices.size() == f_edges.size());
 
-        // faceÓëµãĞòÁĞµÄ¶ÔÓ¦¹ØÏµ
+        // faceä¸ç‚¹åºåˆ—çš„å¯¹åº”å…³ç³»
         std::unordered_map<FaceIndex, std::vector<VertexIndex>> f_to_vseq;
-        // Èı½Ç»¯ºóedgeÓë¶ËµãµÄ¶ÔÓ¦¹ØÏµ, Ê¹ÓÃSortedPairµÄÄ¿µÄÊÇÎªÁËÈÃvpairÎ¨Ò», 
-        // ¼´(v0,v1)==(v1,v0), ·ñÔòadd_edge()»á±»¶àµ÷ÓÃ´Ó¶øÔì³É´íÎó.
+        // ä¸‰è§’åŒ–åedgeä¸ç«¯ç‚¹çš„å¯¹åº”å…³ç³», ä½¿ç”¨SortedPairçš„ç›®çš„æ˜¯ä¸ºäº†è®©vpairå”¯ä¸€, 
+        // å³(v0,v1)==(v1,v0), å¦åˆ™add_edge()ä¼šè¢«å¤šè°ƒç”¨ä»è€Œé€ æˆé”™è¯¯.
         std::map<SortedPair<VertexIndex>, EdgeIndex> endpoint_to_edge;
 
-        // ÊÕ¼¯Ô­Ê¼¶à±ßĞÎÃæÖĞ±ßÓë¶ËµãµÄ¶ÔÓ¦¹ØÏµ.
+        // æ”¶é›†åŸå§‹å¤šè¾¹å½¢é¢ä¸­è¾¹ä¸ç«¯ç‚¹çš„å¯¹åº”å…³ç³».
         std::size_t sz = f_vertices.size();
         for (std::size_t i = 0; i < sz; ++i)
         {
@@ -1501,14 +1501,14 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
         bool is_first = true;
         for (std::size_t i = 0; i < f_num; ++i)
         {
-            // ¶à±ßĞÎÈı½Ç»¯ºó, Òª¸´ÓÃÔ­ÓĞµÄÃæË÷Òı, ²»»áÉ¾³ı, ¹Ì¶¨½«triangle_faces[0]·ÖÅä¸øf_split.
+            // å¤šè¾¹å½¢ä¸‰è§’åŒ–å, è¦å¤ç”¨åŸæœ‰çš„é¢ç´¢å¼•, ä¸ä¼šåˆ é™¤, å›ºå®šå°†triangle_faces[0]åˆ†é…ç»™f_split.
             if (is_first)
             {
                 is_first = false;
                 f_to_vseq.insert(std::make_pair(f_split, triangle_faces[i]));
-                *out++ = f_split; // Èı½Ç»¯ºóµÄÃæ¼ÇÂ¼ÔÚ´«ÈëµÄÈİÆ÷ÖĞ, ·½±ãº¯ÊıºóĞøÊ¹ÓÃ.
+                *out++ = f_split; // ä¸‰è§’åŒ–åçš„é¢è®°å½•åœ¨ä¼ å…¥çš„å®¹å™¨ä¸­, æ–¹ä¾¿å‡½æ•°åç»­ä½¿ç”¨.
             }
-            else // ĞèÒªĞÂ¼ÓÃæ.
+            else // éœ€è¦æ–°åŠ é¢.
             {
                 FaceIndex new_face = add_face();
                 f_to_vseq.insert(std::make_pair(new_face, triangle_faces[i]));
@@ -1520,7 +1520,7 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
             for (int k = 0; k < 3; ++k)
             {
                 SortedPair<VertexIndex> vpair(vset[k], vset[(k + 1) % 3]);
-                if (!endpoint_to_edge.count(vpair)) // ·ÇÔ­Ê¼±ß, ĞèÒªĞÂ¼Ó±ß.
+                if (!endpoint_to_edge.count(vpair)) // éåŸå§‹è¾¹, éœ€è¦æ–°åŠ è¾¹.
                 {
                     EdgeIndex new_edge = add_edge();
                     endpoint_to_edge.insert(std::make_pair(vpair, new_edge));
@@ -1528,11 +1528,11 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
             }
         }
 
-        // Step3 ½«Èı½Ç»¯µÄ½á¹ûĞŞ¸Äµ½¶àÃæÌåÍø¸ñÉÏ.
+        // Step3 å°†ä¸‰è§’åŒ–çš„ç»“æœä¿®æ”¹åˆ°å¤šé¢ä½“ç½‘æ ¼ä¸Š.
         import_triangulation_info(f_split, f_to_vseq, endpoint_to_edge);
     }
 
-    // ÅĞ¶ÏÒ»¸öÃæ¼ÇÂ¼µÄ°ë±ßºÍ°ë±ßhÊÇ·ñÔÚÒ»¸öcellÖĞ.
+    // åˆ¤æ–­ä¸€ä¸ªé¢è®°å½•çš„åŠè¾¹å’ŒåŠè¾¹hæ˜¯å¦åœ¨ä¸€ä¸ªcellä¸­.
     bool in_same_cell(FaceIndex f, Halfedge h)
     {
         return cell(f) == cell(h);
@@ -1555,9 +1555,9 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
             pos = polyhedron_mate(pos);
         } while (pos != anchor && pos != null_halfedge());
 
-        if (pos == anchor) // »Øµ½anchor, ËµÃ÷²»ÊÇÉÈĞÎµÄÇé¿ö, ´ËÊ±record.back()==record.front(), ĞèÒªÉ¾µôÒ»¸ö.
+        if (pos == anchor) // å›åˆ°anchor, è¯´æ˜ä¸æ˜¯æ‰‡å½¢çš„æƒ…å†µ, æ­¤æ—¶record.back()==record.front(), éœ€è¦åˆ æ‰ä¸€ä¸ª.
             record.pop_back();
-        else // ËµÃ÷ËÑË÷µ½´ï±ß½ç, ĞèÒª»»¸ö·½Ïò
+        else // è¯´æ˜æœç´¢åˆ°è¾¾è¾¹ç•Œ, éœ€è¦æ¢ä¸ªæ–¹å‘
         {
             pos = polyhedron_mate(anchor);
             while (pos != null_halfedge())
@@ -1615,7 +1615,7 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
             *out++ = c;
     }
 
-    // ±ê¼ÇËùÓĞµ¥ÔªµÄÄÚÍâÊôĞÔ
+    // æ ‡è®°æ‰€æœ‰å•å…ƒçš„å†…å¤–å±æ€§
     void mark_all_cells()
     {
         std::vector<bool> marked(num_cells(), false);
@@ -1679,9 +1679,9 @@ public: /*------------------- ÍØÆËĞŞ¸ÄµÄÏà¹Øº¯Êı ---------------------------*/
         }
     }
 
-public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
+public: /*-------------------- I/OåŠŸèƒ½ -------------------------*/
 
-    // ½«½Ø¶ÏÍø¸ñµÄÊı¾İ×ª»¯Îª¶àÃæÌåÍø¸ñµÄĞÎÊ½.
+    // å°†æˆªæ–­ç½‘æ ¼çš„æ•°æ®è½¬åŒ–ä¸ºå¤šé¢ä½“ç½‘æ ¼çš„å½¢å¼.
     template <typename TruncatedGrid>
     bool load_from_truncated_grid(TruncatedGrid& tg)
     {
@@ -1689,18 +1689,18 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
             return false;
 
         typedef typename TruncatedGrid::index_type  index_type;
-        // step 1: ´´½¨¼¸ºÎÔªËØµÄÈ«¾ÖË÷Òı, ´ËÊ±ËùÓĞµÄÍØÆËÊôĞÔ¶¼ÎªÄ¬ÈÏÖµ.
+        // step 1: åˆ›å»ºå‡ ä½•å…ƒç´ çš„å…¨å±€ç´¢å¼•, æ­¤æ—¶æ‰€æœ‰çš„æ‹“æ‰‘å±æ€§éƒ½ä¸ºé»˜è®¤å€¼.
 
         // 1.1) add_vertex.
         size_type vertex_num = tg.vertices.size();
         for (size_type i = 0; i < vertex_num; ++i)
             add_vertex(tg.vertices[i]);
 
-        // 1.2) add_faceµÄ¹ı³ÌÖĞadd_edge
-        // ½Ø¶ÏÍø¸ñÃ»ÓĞ±ßµÄ¸ÅÄî, µ«¶àÃæÌåÍø¸ñµÄÍØÆËĞèÒª±ßµÄÈ«¾ÖË÷Òı, ÔõÃ´°ìÄØ?
-        // ½Ø¶ÏÍø¸ñµÄface_vertices_indicesÊı×é°´ÄæÊ±Õë·½Ïò¼ÇÂ¼×ÅÍø¸ñÖĞËùÓĞÃæµÄµã.
-        // ÓÉ´Ë¿ÉÖª, Ò»¸öÃæ¼ÇÂ¼×Å¶àÉÙµã, ¾Í¶ÔÓ¦¶àÉÙ±ß.
-        // µ«ÊÇ, ¶àÃæÌåÍø¸ñµÄÒ»Ìõ±ß±»¶à¸öÃæ¹²Ïí, ĞèÒªÈ¥ÖØ.
+        // 1.2) add_faceçš„è¿‡ç¨‹ä¸­add_edge
+        // æˆªæ–­ç½‘æ ¼æ²¡æœ‰è¾¹çš„æ¦‚å¿µ, ä½†å¤šé¢ä½“ç½‘æ ¼çš„æ‹“æ‰‘éœ€è¦è¾¹çš„å…¨å±€ç´¢å¼•, æ€ä¹ˆåŠå‘¢?
+        // æˆªæ–­ç½‘æ ¼çš„face_vertices_indicesæ•°ç»„æŒ‰é€†æ—¶é’ˆæ–¹å‘è®°å½•ç€ç½‘æ ¼ä¸­æ‰€æœ‰é¢çš„ç‚¹.
+        // ç”±æ­¤å¯çŸ¥, ä¸€ä¸ªé¢è®°å½•ç€å¤šå°‘ç‚¹, å°±å¯¹åº”å¤šå°‘è¾¹.
+        // ä½†æ˜¯, å¤šé¢ä½“ç½‘æ ¼çš„ä¸€æ¡è¾¹è¢«å¤šä¸ªé¢å…±äº«, éœ€è¦å»é‡.
 
         typedef SortedPair<VertexIndex> Vpair;
         std::map<Vpair, EdgeIndex> endpoint_to_edge;
@@ -1708,14 +1708,14 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
         size_type face_num = tg.face_vertices_indices_offset.size() - 1;
         for (size_type i = 0; i < face_num; ++i)
         {
-            // Ìí¼ÓÃæµÄ¹ı³ÌÖĞ, fÓëiÔÚÊıÖµÉÏÏàµÈ.
+            // æ·»åŠ é¢çš„è¿‡ç¨‹ä¸­, fä¸iåœ¨æ•°å€¼ä¸Šç›¸ç­‰.
             FaceIndex f = add_face();
 
             size_type vbegin = tg.face_vertices_indices_offset[f];
             size_type vend = tg.face_vertices_indices_offset[f + 1];
 
-            // °´ÄæÊ±Õë±éÀúÒ»¸öÃæµÄËùÓĞµãÊ±, ½¨Á¢edgeµÄglobal index
-            // Note: ´Ë´¦µÄ´¦Àí¾ö¶¨ÁË±ß¶ÔÓ¦µÄµãÊÇÆğÊ¼µã¶ø·ÇÖÕµã(source, not target)
+            // æŒ‰é€†æ—¶é’ˆéå†ä¸€ä¸ªé¢çš„æ‰€æœ‰ç‚¹æ—¶, å»ºç«‹edgeçš„global index
+            // Note: æ­¤å¤„çš„å¤„ç†å†³å®šäº†è¾¹å¯¹åº”çš„ç‚¹æ˜¯èµ·å§‹ç‚¹è€Œéç»ˆç‚¹(source, not target)
             for (size_type k = vbegin; k < vend; ++k)
             {
                 Vpair vpair;
@@ -1736,10 +1736,10 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
                     tg.face_edges_indices.push_back(endpoint_to_edge[vpair]);
             }
         }
-        // ¶şÕßµÄÖµÍêÈ«Ò»Ñù, Ö±½Ó¿½±´¼´¿É.
+        // äºŒè€…çš„å€¼å®Œå…¨ä¸€æ ·, ç›´æ¥æ‹·è´å³å¯.
         tg.face_edges_indices_offset = tg.face_vertices_indices_offset;
 
-        // 1.3) add_cellµÄ¹ı³ÌÖĞ¼ÇÂ¼Ãæ¹ØÁªµÄcell.
+        // 1.3) add_cellçš„è¿‡ç¨‹ä¸­è®°å½•é¢å…³è”çš„cell.
         size_type cell_num = tg.cell_faces_indices_offset.size() - 1;
         int imax = -1, jmax = -1;
         for (size_type i = 0; i < cell_num; ++i)
@@ -1769,11 +1769,11 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
         }
         IMax = imax + 1;
         JMax = jmax + 1;
-        // step 2: ÉèÖÃ¼¸ºÎÔªËØµÄÍØÆË.
-        // ÉÏÃæµÄ²½Öè´´½¨ÁËËùÓĞ¼¸ºÎÔªËØ, Ïà¹ØÊôĞÔÖ»ÓĞÍØÆËÊôĞÔÈÔÈ»Îª¿Õ, ĞèÒªÉèÖÃ.
+        // step 2: è®¾ç½®å‡ ä½•å…ƒç´ çš„æ‹“æ‰‘.
+        // ä¸Šé¢çš„æ­¥éª¤åˆ›å»ºäº†æ‰€æœ‰å‡ ä½•å…ƒç´ , ç›¸å…³å±æ€§åªæœ‰æ‹“æ‰‘å±æ€§ä»ç„¶ä¸ºç©º, éœ€è¦è®¾ç½®.
 
-        // vertex, edge, faceµÄÍØÆËÖĞÖ»¼ÇÂ¼×ÅÒ»Ìõhalfedge, ÓÉÓÚËûÃÇ»á±»ºÜ¶à¸öcell¹²Ïí, 
-        // ËùÒÔ»á±»¶à´ÎĞŞ¸Ä, Ôö¼Ó¸ÃÊôĞÔ¿ÉÒÔ±£Ö¤Ö»ĞŞ¸ÄÒ»´ÎÍØÆË
+        // vertex, edge, faceçš„æ‹“æ‰‘ä¸­åªè®°å½•ç€ä¸€æ¡halfedge, ç”±äºä»–ä»¬ä¼šè¢«å¾ˆå¤šä¸ªcellå…±äº«, 
+        // æ‰€ä»¥ä¼šè¢«å¤šæ¬¡ä¿®æ”¹, å¢åŠ è¯¥å±æ€§å¯ä»¥ä¿è¯åªä¿®æ”¹ä¸€æ¬¡æ‹“æ‰‘
         PropertyMap<VertexIndex, bool> vmodified =
             add_property_map<VertexIndex, bool>("v:first", false).first;
         PropertyMap<EdgeIndex, bool> emodified =
@@ -1789,7 +1789,7 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
             size_type fend = tg.cell_faces_indices_offset[c + 1];
             size_type fnum = fend - fbegin;
 
-            // global indexÓëlocal indexµÄÓ³Éä¹ØÏµ, È¥ÖØ
+            // global indexä¸local indexçš„æ˜ å°„å…³ç³», å»é‡
             std::map<VertexIndex, bias_type> vlocal;
             std::map<EdgeIndex, bias_type> elocal;
 
@@ -1799,10 +1799,10 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
             {
                 FaceIndex f(tg.cell_faces_indices[i]);
 
-                // Ìî³äfacesÊı×é
+                // å¡«å……facesæ•°ç»„
                 cell_topo.faces.push_back(f);
 
-                // Ìî³äFaceTopo
+                // å¡«å……FaceTopo
                 FaceTopo& face_topo = ftopo[f];
                 if (fmodified[f] == false)
                 {
@@ -1811,7 +1811,7 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
                     fmodified[f] = true;
                 }
 
-                // face¶ÔÓ¦µÄvertexÓëedgeµÄ·¶Î§, ¶şÕß·¶Î§Ò»ÖÂ.
+                // faceå¯¹åº”çš„vertexä¸edgeçš„èŒƒå›´, äºŒè€…èŒƒå›´ä¸€è‡´.
                 size_type start = tg.face_vertices_indices_offset[f];
                 size_type finish = tg.face_vertices_indices_offset[f + 1];
 
@@ -1824,13 +1824,13 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
                     f_edges.push_back(tg.face_edges_indices[k]);
                 }
 
-                // Òª¿¼ÂÇcellÒıÓÃfaceÊ±µÄĞıÏò
+                // è¦è€ƒè™‘cellå¼•ç”¨faceæ—¶çš„æ—‹å‘
                 bool use_born_order = tg.faces_directions_per_cell[i];
                 if (!use_born_order)
                 {
-                    // Note: ¼òµ¥µÄ·´Ïò»áÊ¹µÃ¸÷µãÊÇ¶ÔÓ¦ÓĞÏò±ßµÄÄ©µã, ¶øÎÒÃÇÆÚÍûÊÇÆğµã, 
-                    // ËùÒÔ·´×ªµÄÊÇ[begin + 1, end)¶ø·Ç[begin, end).
-                    // ÆÚÍûµÄĞ§¹û: [0,1,2,3]-->[0,3,2,1]
+                    // Note: ç®€å•çš„åå‘ä¼šä½¿å¾—å„ç‚¹æ˜¯å¯¹åº”æœ‰å‘è¾¹çš„æœ«ç‚¹, è€Œæˆ‘ä»¬æœŸæœ›æ˜¯èµ·ç‚¹, 
+                    // æ‰€ä»¥åè½¬çš„æ˜¯[begin + 1, end)è€Œé[begin, end).
+                    // æœŸæœ›çš„æ•ˆæœ: [0,1,2,3]-->[0,3,2,1]
                     std::reverse(f_vertices.begin() + 1, f_vertices.end());
                     std::reverse(f_edges.begin(), f_edges.end());
                 }
@@ -1842,7 +1842,7 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
                     if (!vlocal.count(vi))
                     {
                         vbias = cell_topo.vertices.size();
-                        cell_topo.vertices.push_back(vi);  // Ìî³äverticesÊı×é
+                        cell_topo.vertices.push_back(vi);  // å¡«å……verticesæ•°ç»„
                         vlocal.insert(std::make_pair(vi, vbias));
                     }
                     else
@@ -1853,16 +1853,16 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
                     if (!elocal.count(ei))
                     {
                         ebias = cell_topo.edges.size();
-                        cell_topo.edges.push_back(ei);     // Ìî³äedgesÊı×é
+                        cell_topo.edges.push_back(ei);     // å¡«å……edgesæ•°ç»„
                         elocal.insert(std::make_pair(ei, ebias));
                     }
                     else
                         ebias = elocal[ei];
 
-                    // Ìî³ähalfedges
+                    // å¡«å……halfedges
                     cell_topo.halfedges.push_back(std::make_pair(vbias, ebias));
 
-                    // Ìî³äVertexTopo
+                    // å¡«å……VertexTopo
                     if (vmodified[vi] == false)
                     {
                         VertexTopo& vertex_topo = vtopo[vi];
@@ -1872,7 +1872,7 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
                         vmodified[vi] = true;
                     }
 
-                    // Ìî³äEdgeTopo
+                    // å¡«å……EdgeTopo
                     if (emodified[ei] == false)
                     {
                         EdgeTopo& edge_topo = etopo[ei];
@@ -1883,16 +1883,16 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
                     }
                 }
                 off += (finish - start);
-                cell_topo.offset.push_back(off);  // Ìî³äoffsetÊı×é
+                cell_topo.offset.push_back(off);  // å¡«å……offsetæ•°ç»„
             }
         }
-        // É¾³ı¸½¼ÓÊôĞÔ.
+        // åˆ é™¤é™„åŠ å±æ€§.
         remove_all_attached_property_maps();
         return true;
     }
 
 
-    // ½«¶àÃæÌåÍø¸ñµÄÊı¾İ×ª»¯Îª½Ø¶ÏÍø¸ñµÄĞÎÊ½.
+    // å°†å¤šé¢ä½“ç½‘æ ¼çš„æ•°æ®è½¬åŒ–ä¸ºæˆªæ–­ç½‘æ ¼çš„å½¢å¼.
     template <typename TruncatedGrid>
     bool transform_to_truncated_grid(TruncatedGrid& tg, bool need_out)
     {
@@ -1979,23 +1979,23 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
 
             tg.face_vertices_indices_offset.push_back(tg.face_vertices_indices.size());
 
-            // ÃæµÄ·¨ÏòÁ¿ĞèÒªÖØĞÂ¼ÆËãÒ»ÏÂ, ÖØĞÂ¼ÆËã»áµ¼ÖÂºÜÉÙ¼¸¸ö·¨ÏòÁ¿·´Ïò, »ù±¾²»Ó°ÏìÏÔÊ¾.
+            // é¢çš„æ³•å‘é‡éœ€è¦é‡æ–°è®¡ç®—ä¸€ä¸‹, é‡æ–°è®¡ç®—ä¼šå¯¼è‡´å¾ˆå°‘å‡ ä¸ªæ³•å‘é‡åå‘, åŸºæœ¬ä¸å½±å“æ˜¾ç¤º.
             Point p0 = point(f_vertices[0]);
             Point p1 = point(f_vertices[1]);
             for (std::size_t i = 2; i < f_vertices.size(); ++i)
             {
                 Point pi = point(f_vertices[i]);
-                if (!Kernel::Collinear_3()(p0, p1, pi)) // ×¢ÒâÌø¹ı¹²ÏßµÄÇé¿ö.
+                if (!Kernel::Collinear_3()(p0, p1, pi)) // æ³¨æ„è·³è¿‡å…±çº¿çš„æƒ…å†µ.
                 {
                     Normal f_norm = Kernel::Construct_normal_3()(p0, p1, pi);
-                    f_norm /= CGAL::sqrt(f_norm.squared_length()); // µ¥Î»»¯.
+                    f_norm /= CGAL::sqrt(f_norm.squared_length()); // å•ä½åŒ–.
                     tg.normal_per_face.push_back(f_norm);
                     break;
                 }
             }
         }
 
-        // ±éÀúµã, Ìî³äverticesÊı×é.
+        // éå†ç‚¹, å¡«å……verticesæ•°ç»„.
         for (VertexIndex v : vertex_set)
             tg.vertices.push_back(point(v));
 
@@ -2050,9 +2050,9 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
 
         std::unordered_map<SMVertex, VertexIndex> sm_vertex_to_pm_vertex;
 
-        // step 1: ´´½¨¼¸ºÎÔªËØµÄÈ«¾ÖË÷Òı, ´ËÊ±ËùÓĞµÄÍØÆËÊôĞÔ¶¼ÎªÄ¬ÈÏÖµ.
+        // step 1: åˆ›å»ºå‡ ä½•å…ƒç´ çš„å…¨å±€ç´¢å¼•, æ­¤æ—¶æ‰€æœ‰çš„æ‹“æ‰‘å±æ€§éƒ½ä¸ºé»˜è®¤å€¼.
 
-        // 1.1) Ìí¼Óµã
+        // 1.1) æ·»åŠ ç‚¹
         for (SMVertex v_sm : sm.vertices())
         {
             VertexIndex v_pm = add_vertex(sm.point(v_sm));
@@ -2060,7 +2060,7 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
         }
 
 
-        // 1.2) add_faceµÄ¹ı³ÌÖĞadd_edge
+        // 1.2) add_faceçš„è¿‡ç¨‹ä¸­add_edge
         typedef SortedPair<VertexIndex> Vpair;
         std::map<Vpair, EdgeIndex> endpoint_to_edge;
 
@@ -2089,8 +2089,8 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
         // 1.3) add_cell
         CellIndex c = add_cell();
 
-        // step 2: ÉèÖÃ¼¸ºÎÔªËØµÄÍØÆË.
-        // ÉÏÃæµÄ²½Öè´´½¨ÁËËùÓĞ¼¸ºÎÔªËØ, Ïà¹ØÊôĞÔÖ»ÓĞÍØÆËÊôĞÔÈÔÈ»Îª¿Õ, ĞèÒªÉèÖÃ.
+        // step 2: è®¾ç½®å‡ ä½•å…ƒç´ çš„æ‹“æ‰‘.
+        // ä¸Šé¢çš„æ­¥éª¤åˆ›å»ºäº†æ‰€æœ‰å‡ ä½•å…ƒç´ , ç›¸å…³å±æ€§åªæœ‰æ‹“æ‰‘å±æ€§ä»ç„¶ä¸ºç©º, éœ€è¦è®¾ç½®.
 
         {
             CellTopo& cell_topo = ctopo[c];
@@ -2137,118 +2137,118 @@ public: /*-------------------- I/O¹¦ÄÜ -------------------------*/
     }
 
 private:
-    /*----------------------- ÊôĞÔ´¦ÀíÄ£¿é ----------------------------------
+    /*----------------------- å±æ€§å¤„ç†æ¨¡å— ----------------------------------
     *
-    * »ùÓÚproperty.hÌá¹©µÄËÄ¸öÀà, ¿ÉÒÔºÜ·½±ãµØ¹ÜÀí¼¸ºÎÔªËØµÄÊôĞÔ
-    * ÀıÈç, vertexµÄÒ»ÖÖÊôĞÔÓÉPropertyArray<T>´æ´¢, vertexµÄËùÓĞÊôĞÔ¶¼½»³öÒ»¸ö
-    * Ö¸Õë, Í³Ò»·ÅÔÚPropertyContainerÖĞ½øĞĞ¹ÜÀí, Èç¹ûÏëĞŞ¸ÄÄ³¸öÊôĞÔÖµ, Ôò´Ó
-    * PropertyContainerÖĞÈ¡³ö¶ÔÓ¦µÄÖ¸Õë, ³õÊ¼»¯PropertyMap, ÓÉPropertyMap½øĞĞĞŞ¸Ä
+    * åŸºäºproperty.hæä¾›çš„å››ä¸ªç±», å¯ä»¥å¾ˆæ–¹ä¾¿åœ°ç®¡ç†å‡ ä½•å…ƒç´ çš„å±æ€§
+    * ä¾‹å¦‚, vertexçš„ä¸€ç§å±æ€§ç”±PropertyArray<T>å­˜å‚¨, vertexçš„æ‰€æœ‰å±æ€§éƒ½äº¤å‡ºä¸€ä¸ª
+    * æŒ‡é’ˆ, ç»Ÿä¸€æ”¾åœ¨PropertyContainerä¸­è¿›è¡Œç®¡ç†, å¦‚æœæƒ³ä¿®æ”¹æŸä¸ªå±æ€§å€¼, åˆ™ä»
+    * PropertyContainerä¸­å–å‡ºå¯¹åº”çš„æŒ‡é’ˆ, åˆå§‹åŒ–PropertyMap, ç”±PropertyMapè¿›è¡Œä¿®æ”¹
     *
     *
-    * ÊôĞÔ·ÖÎª¹ÌÓĞÊôĞÔºÍ¸½¼ÓÊôĞÔÁ½Àà
-    *     1) ¹ÌÓĞÊôĞÔ: Ö¸Àà×Ô´øµÄÊôĞÔ, Èçv:point, v:removed, v:topology
-    *     2) ¸½¼ÓÊôĞÔ: ¸ù¾İÊµ¼ÊĞèÒªÌí¼ÓµÄÊôĞÔ
+    * å±æ€§åˆ†ä¸ºå›ºæœ‰å±æ€§å’Œé™„åŠ å±æ€§ä¸¤ç±»
+    *     1) å›ºæœ‰å±æ€§: æŒ‡ç±»è‡ªå¸¦çš„å±æ€§, å¦‚v:point, v:removed, v:topology
+    *     2) é™„åŠ å±æ€§: æ ¹æ®å®é™…éœ€è¦æ·»åŠ çš„å±æ€§
     *
-    * ±¾Ä£¿éÖ÷ÒªÊµÏÖ¶ÔÊôĞÔµÄ´¦Àí, ¼´ÊôĞÔµÄÌí¼Ó, »ñÈ¡, É¾³ı
+    * æœ¬æ¨¡å—ä¸»è¦å®ç°å¯¹å±æ€§çš„å¤„ç†, å³å±æ€§çš„æ·»åŠ , è·å–, åˆ é™¤
     *
     */
 
-    // Ö÷Òª¹¦ÄÜ£ºÑ¡È¡Ä³¸ö¼¸ºÎÔªËØµÄÊôĞÔ, PropertySelectorµÄ¿É¼ûĞÔÓ¦Îªprivate
+    // ä¸»è¦åŠŸèƒ½ï¼šé€‰å–æŸä¸ªå‡ ä½•å…ƒç´ çš„å±æ€§, PropertySelectorçš„å¯è§æ€§åº”ä¸ºprivate
     template <typename, bool = true>
     struct PropertySelector {};
 
-    // Æ«ÌØ»¯1£º»ñÈ¡vertexµÄPropertyContainer
+    // åç‰¹åŒ–1ï¼šè·å–vertexçš„PropertyContainer
     template <bool dummy>
     struct PropertySelector<typename PolyhedralMesh<P, T>::VertexIndex, dummy>
     {
     public:
         PropertySelector(PolyhedralMesh<P, T>* pm) : p_grid(pm) {}
 
-        // ¸Ã·Âº¯ÊıÓÃÓÚ»ñÈ¡PropertyContainer
-        PropertyContainer<Self, typename PolyhedralMesh<P, T>::VertexIndex>& // ·µ»ØÖµ
+        // è¯¥ä»¿å‡½æ•°ç”¨äºè·å–PropertyContainer
+        PropertyContainer<Self, typename PolyhedralMesh<P, T>::VertexIndex>& // è¿”å›å€¼
         operator()()
         {
             return p_grid->vprops;
         }
 
-        // É¾³ı¸½¼ÓÊôĞÔ, Ö»±£Áô¹ÌÓĞÊôĞÔ
-        // vertexµÄ¹ÌÓĞÊôĞÔÓĞpoint, topology, removedÈı¸öÊôĞÔ, ¹ÊÎª3
+        // åˆ é™¤é™„åŠ å±æ€§, åªä¿ç•™å›ºæœ‰å±æ€§
+        // vertexçš„å›ºæœ‰å±æ€§æœ‰point, topology, removedä¸‰ä¸ªå±æ€§, æ•…ä¸º3
         void resize_property_array() { p_grid->vprops.resize_property_array(3); }
 
     private:
-        PolyhedralMesh<P, T>* p_grid;        // Ö¸Ïò¶àÃæÌåÍø¸ñµÄÖ¸Õë
+        PolyhedralMesh<P, T>* p_grid;        // æŒ‡å‘å¤šé¢ä½“ç½‘æ ¼çš„æŒ‡é’ˆ
     };
 
-    // Æ«ÌØ»¯2£º»ñÈ¡edgeµÄPropertyContainer
+    // åç‰¹åŒ–2ï¼šè·å–edgeçš„PropertyContainer
     template <bool dummy>
     struct PropertySelector<typename PolyhedralMesh<P, T>::EdgeIndex, dummy>
     {
     public:
         PropertySelector(PolyhedralMesh<P, T>* pm) : p_grid(pm) {}
 
-        // ¸Ã·Âº¯ÊıÓÃÓÚ»ñÈ¡PropertyContainer
-        PropertyContainer<Self, typename PolyhedralMesh<P, T>::EdgeIndex>&    // ·µ»ØÖµ
+        // è¯¥ä»¿å‡½æ•°ç”¨äºè·å–PropertyContainer
+        PropertyContainer<Self, typename PolyhedralMesh<P, T>::EdgeIndex>&    // è¿”å›å€¼
         operator()()
         {
             return p_grid->eprops;
         }
 
-        // É¾³ı¸½¼ÓÊôĞÔ, Ö»±£Áô¹ÌÓĞÊôĞÔ
-        // edgeµÄ¹ÌÓĞÊôĞÔÓĞtopology, removedÁ½¸öÊôĞÔ, ¹ÊÎª2
+        // åˆ é™¤é™„åŠ å±æ€§, åªä¿ç•™å›ºæœ‰å±æ€§
+        // edgeçš„å›ºæœ‰å±æ€§æœ‰topology, removedä¸¤ä¸ªå±æ€§, æ•…ä¸º2
         void resize_property_array() { p_grid->eprops.resize_property_array(2); }
 
     private:
-        PolyhedralMesh<P, T>* p_grid;        // Ö¸Ïò¶àÃæÌåÍø¸ñµÄÖ¸Õë
+        PolyhedralMesh<P, T>* p_grid;        // æŒ‡å‘å¤šé¢ä½“ç½‘æ ¼çš„æŒ‡é’ˆ
     };
 
-    // Æ«ÌØ»¯3£º»ñÈ¡faceµÄPropertyContainer
+    // åç‰¹åŒ–3ï¼šè·å–faceçš„PropertyContainer
     template <bool dummy>
     struct PropertySelector<typename PolyhedralMesh<P, T>::FaceIndex, dummy>
     {
     public:
         PropertySelector(PolyhedralMesh<P, T>* pm) :p_grid(pm) {}
 
-        // ¸Ã·Âº¯ÊıÓÃÓÚ»ñÈ¡PropertyContainer
-        PropertyContainer<Self, typename PolyhedralMesh<P, T>::FaceIndex>&    // ·µ»ØÖµ
+        // è¯¥ä»¿å‡½æ•°ç”¨äºè·å–PropertyContainer
+        PropertyContainer<Self, typename PolyhedralMesh<P, T>::FaceIndex>&    // è¿”å›å€¼
         operator()()
         {
             return p_grid->fprops;
         }
 
-        // É¾³ı¸½¼ÓÊôĞÔ, Ö»±£Áô¹ÌÓĞÊôĞÔ
+        // åˆ é™¤é™„åŠ å±æ€§, åªä¿ç•™å›ºæœ‰å±æ€§
         void resize_property_array() { p_grid->fprops.resize_property_array(2); }
 
     private:
-        PolyhedralMesh<P, T>* p_grid;        // Ö¸Ïò¶àÃæÌåÍø¸ñµÄÖ¸Õë
+        PolyhedralMesh<P, T>* p_grid;        // æŒ‡å‘å¤šé¢ä½“ç½‘æ ¼çš„æŒ‡é’ˆ
     };
 
-    // Æ«ÌØ»¯4£º»ñÈ¡cellµÄPropertyContainer
+    // åç‰¹åŒ–4ï¼šè·å–cellçš„PropertyContainer
     template <bool dummy>
     struct PropertySelector<typename PolyhedralMesh<P, T>::CellIndex, dummy>
     {
     public:
         PropertySelector(PolyhedralMesh<P, T>* pm) :p_grid(pm) {}
 
-        // ¸Ã·Âº¯ÊıÓÃÓÚ»ñÈ¡PropertyContainer
-        PropertyContainer<Self, typename PolyhedralMesh<P, T>::CellIndex>&    // ·µ»ØÖµ
+        // è¯¥ä»¿å‡½æ•°ç”¨äºè·å–PropertyContainer
+        PropertyContainer<Self, typename PolyhedralMesh<P, T>::CellIndex>&    // è¿”å›å€¼
         operator()()
         {
             return p_grid->cprops;
         }
 
-        // É¾³ı¸½¼ÓÊôĞÔ, Ö»±£Áô¹ÌÓĞÊôĞÔ
+        // åˆ é™¤é™„åŠ å±æ€§, åªä¿ç•™å›ºæœ‰å±æ€§
         void resize_property_array() { p_grid->cprops.resize_property_array(3); }
 
     private:
-        PolyhedralMesh<P, T>* p_grid;        // Ö¸Ïò¶àÃæÌåÍø¸ñµÄÖ¸Õë
+        PolyhedralMesh<P, T>* p_grid;        // æŒ‡å‘å¤šé¢ä½“ç½‘æ ¼çš„æŒ‡é’ˆ
     };
 
 public:
 
-    // ÏòPropertyContainerÖĞÌí¼ÓÊôĞÔ
-    // nameÎªÊôĞÔµÄÃû³Æ, tÎª¸ÃÊôĞÔµÄÄ¬ÈÏÖµ
-    // ·µ»ØÖµÊÇÒ»¸öpair, boolÎªtrueÊ±±íÃ÷Ã»ÓĞ¸ÃÊôĞÔ, ³É¹¦Ìí¼Ó, ·µ»ØPropertyMapÖ¸Ïò¸ÃÊôĞÔÊı×é
-    //                      ÎªfalseÊ±±íÃ÷¸ÃÊôĞÔÒÑ´æÔÚ, ÎŞĞèÌí¼Ó
+    // å‘PropertyContainerä¸­æ·»åŠ å±æ€§
+    // nameä¸ºå±æ€§çš„åç§°, tä¸ºè¯¥å±æ€§çš„é»˜è®¤å€¼
+    // è¿”å›å€¼æ˜¯ä¸€ä¸ªpair, boolä¸ºtrueæ—¶è¡¨æ˜æ²¡æœ‰è¯¥å±æ€§, æˆåŠŸæ·»åŠ , è¿”å›PropertyMapæŒ‡å‘è¯¥å±æ€§æ•°ç»„
+    //                      ä¸ºfalseæ—¶è¡¨æ˜è¯¥å±æ€§å·²å­˜åœ¨, æ— éœ€æ·»åŠ 
     template <typename I, typename T>
     std::pair<PropertyMap<I, T>, bool>
     add_property_map(std::string name = std::string(), const T t = T())
@@ -2256,7 +2256,7 @@ public:
         return PropertySelector<I>(this)().template add<T>(name, t);
     }
 
-    // ÔÚPropertyContainerÖĞËÑË÷ÊôĞÔ
+    // åœ¨PropertyContainerä¸­æœç´¢å±æ€§
     template <typename I, typename T>
     std::pair<PropertyMap<I, T>, bool>
     get_property_map(const std::string& name) const
@@ -2264,23 +2264,23 @@ public:
         return PropertySelector<I>(const_cast<PolyhedralMesh*>(this))().template get<T>(name);
     }
 
-    // ´ÓPropertyContainerÖĞÉ¾³ıÄ³ÊôĞÔ
+    // ä»PropertyContainerä¸­åˆ é™¤æŸå±æ€§
     template <typename I, typename T>
     void remove_property_map(PropertyMap<I, T>& pm)
     {
         PropertySelector<I>(this)().template remove<T>(pm);
     }
 
-    // É¾³ı¸½¼ÓÊôĞÔ, ¼´ÓÉadd_property_mapº¯ÊıÌí¼ÓµÄÊôĞÔ
-    // ÈçvertexÖ»±£Áô'v:point','v:topology','v:removed'ÕâÈı¸ö, ÆäÓàÈ«²¿É¾³ı
+    // åˆ é™¤é™„åŠ å±æ€§, å³ç”±add_property_mapå‡½æ•°æ·»åŠ çš„å±æ€§
+    // å¦‚vertexåªä¿ç•™'v:point','v:topology','v:removed'è¿™ä¸‰ä¸ª, å…¶ä½™å…¨éƒ¨åˆ é™¤
     template <typename I>
     void remove_attached_property_maps()
     {
         PropertySelector<I>(this).resize_property_array();
     }
 
-    // É¾³ıËùÓĞ¼¸ºÎÔªËØµÄ¸½¼ÓÊôĞÔ
-    // ×¢Òâ£ºÉ¾³ı»áÊÍ·ÅÊôĞÔËùÔÚµÄÄÚ´æ¿Õ¼ä
+    // åˆ é™¤æ‰€æœ‰å‡ ä½•å…ƒç´ çš„é™„åŠ å±æ€§
+    // æ³¨æ„ï¼šåˆ é™¤ä¼šé‡Šæ”¾å±æ€§æ‰€åœ¨çš„å†…å­˜ç©ºé—´
     void remove_all_attached_property_maps()
     {
         remove_attached_property_maps<VertexIndex>();
@@ -2289,8 +2289,8 @@ public:
         remove_attached_property_maps<CellIndex>();
     }
 
-    // »ñÈ¡Ä³ÖÖÊôĞÔµÄÖµµÄÀàĞÍ, ¼´PropertyMapµÄvalue_type
-    // ÒÀ¿¿ÊôĞÔÃû½øĞĞ²éÑ¯, ÈôÊôĞÔ²»´æÔÚ, Ôò»áµÃµ½typeid(void)
+    // è·å–æŸç§å±æ€§çš„å€¼çš„ç±»å‹, å³PropertyMapçš„value_type
+    // ä¾é å±æ€§åè¿›è¡ŒæŸ¥è¯¢, è‹¥å±æ€§ä¸å­˜åœ¨, åˆ™ä¼šå¾—åˆ°typeid(void)
     template <typename I>
     const std::type_info& property_type(const std::string& name)
     {
@@ -2319,7 +2319,7 @@ public:
         cinfo[old_cell].ctype = OUT;
     }
 
-    // for debug, ·µ»ØË÷ÒıÀàĞÍÎªIµÄËùÓĞÊôĞÔÃû³Æ
+    // for debug, è¿”å›ç´¢å¼•ç±»å‹ä¸ºIçš„æ‰€æœ‰å±æ€§åç§°
     template <typename I>
     std::vector<std::string> properties() const
     {
@@ -2331,38 +2331,38 @@ public:
 
     // data member
 private:
-    PropertyContainer<Self, VertexIndex>   vprops;    // vertexµÄËùÓĞÊôĞÔ
-    PropertyContainer<Self, EdgeIndex>     eprops;    // edgeµÄËùÓĞÊôĞÔ
-    PropertyContainer<Self, FaceIndex>     fprops;    // faceµÄËùÓĞÊôĞÔ
-    PropertyContainer<Self, CellIndex>     cprops;    // cellµÄËùÓĞÊôĞÔ
+    PropertyContainer<Self, VertexIndex>   vprops;    // vertexçš„æ‰€æœ‰å±æ€§
+    PropertyContainer<Self, EdgeIndex>     eprops;    // edgeçš„æ‰€æœ‰å±æ€§
+    PropertyContainer<Self, FaceIndex>     fprops;    // faceçš„æ‰€æœ‰å±æ€§
+    PropertyContainer<Self, CellIndex>     cprops;    // cellçš„æ‰€æœ‰å±æ€§
 
-    PropertyMap<VertexIndex, VertexTopo>   vtopo;     // vertexµÄÍØÆËÊôĞÔ
-    PropertyMap<EdgeIndex, EdgeTopo>       etopo;     // edgeµÄÍØÆËÊôĞÔ
-    PropertyMap<FaceIndex, FaceTopo>       ftopo;     // faceµÄÍØÆËÊôĞÔ
-    PropertyMap<CellIndex, CellTopo>       ctopo;     // cellµÄÍØÆËÊôĞÔ
+    PropertyMap<VertexIndex, VertexTopo>   vtopo;     // vertexçš„æ‹“æ‰‘å±æ€§
+    PropertyMap<EdgeIndex, EdgeTopo>       etopo;     // edgeçš„æ‹“æ‰‘å±æ€§
+    PropertyMap<FaceIndex, FaceTopo>       ftopo;     // faceçš„æ‹“æ‰‘å±æ€§
+    PropertyMap<CellIndex, CellTopo>       ctopo;     // cellçš„æ‹“æ‰‘å±æ€§
 
-    PropertyMap<VertexIndex, Point>        vpoint;    // vertexµÄµãÊôĞÔ
-    PropertyMap<CellIndex, CellInfo>       cinfo;     // cellµÄIJKÊôĞÔÒÔ¼°ÄÚÍâÊôĞÔ
+    PropertyMap<VertexIndex, Point>        vpoint;    // vertexçš„ç‚¹å±æ€§
+    PropertyMap<CellIndex, CellInfo>       cinfo;     // cellçš„IJKå±æ€§ä»¥åŠå†…å¤–å±æ€§
     int IMax;
     int JMax;
 
-    PropertyMap<VertexIndex, bool>      vremoved;     // vertexÊÇ·ñ±»±ê¼ÇÎªÉ¾³ı
-    PropertyMap<EdgeIndex, bool>        eremoved;     // edgeÊÇ·ñ±»±ê¼ÇÎªÉ¾³ı
-    PropertyMap<FaceIndex, bool>        fremoved;     // faceÊÇ·ñ±»±ê¼ÇÎªÉ¾³ı
-    PropertyMap<CellIndex, bool>        cremoved;     // cellÊÇ·ñ±»±ê¼ÇÎªÉ¾³ı
+    PropertyMap<VertexIndex, bool>      vremoved;     // vertexæ˜¯å¦è¢«æ ‡è®°ä¸ºåˆ é™¤
+    PropertyMap<EdgeIndex, bool>        eremoved;     // edgeæ˜¯å¦è¢«æ ‡è®°ä¸ºåˆ é™¤
+    PropertyMap<FaceIndex, bool>        fremoved;     // faceæ˜¯å¦è¢«æ ‡è®°ä¸ºåˆ é™¤
+    PropertyMap<CellIndex, bool>        cremoved;     // cellæ˜¯å¦è¢«æ ‡è®°ä¸ºåˆ é™¤
 
-    size_type removed_vertices;            // ±ê¼ÇÎªÉ¾³ıµÄvertexÊıÁ¿
-    size_type removed_edges;               // ±ê¼ÇÎªÉ¾³ıµÄedgeÊıÁ¿
-    size_type removed_faces;               // ±ê¼ÇÎªÉ¾³ıµÄfaceÊıÁ¿
-    size_type removed_cells;               // ±ê¼ÇÎªÉ¾³ıµÄcellÊıÁ¿
+    size_type removed_vertices;            // æ ‡è®°ä¸ºåˆ é™¤çš„vertexæ•°é‡
+    size_type removed_edges;               // æ ‡è®°ä¸ºåˆ é™¤çš„edgeæ•°é‡
+    size_type removed_faces;               // æ ‡è®°ä¸ºåˆ é™¤çš„faceæ•°é‡
+    size_type removed_cells;               // æ ‡è®°ä¸ºåˆ é™¤çš„cellæ•°é‡
 
-    size_type vertices_freelist;           // Ä¿Ç°¿ÉÖØĞÂ·ÖÅäµÄ·ÏÆúVertexIndex
-    size_type edges_freelist;              // Ä¿Ç°¿ÉÖØĞÂ·ÖÅäµÄ·ÏÆúEdgeIndex
-    size_type faces_freelist;              // Ä¿Ç°¿ÉÖØĞÂ·ÖÅäµÄ·ÏÆúFaceIndex
-    size_type cells_freelist;              // Ä¿Ç°¿ÉÖØĞÂ·ÖÅäµÄ·ÏÆúCellIndex
+    size_type vertices_freelist;           // ç›®å‰å¯é‡æ–°åˆ†é…çš„åºŸå¼ƒVertexIndex
+    size_type edges_freelist;              // ç›®å‰å¯é‡æ–°åˆ†é…çš„åºŸå¼ƒEdgeIndex
+    size_type faces_freelist;              // ç›®å‰å¯é‡æ–°åˆ†é…çš„åºŸå¼ƒFaceIndex
+    size_type cells_freelist;              // ç›®å‰å¯é‡æ–°åˆ†é…çš„åºŸå¼ƒCellIndex
 
-    bool garbage;   // ÊÇ·ñÓĞÀ¬»ø(¼´ÔªËØ±»±ê¼ÇÎªÉ¾³ı)
-    bool recycle;   // ÊÇ·ñÑ­»·ÀûÓÃÒÑ±ê¼ÇÎªÉ¾³ıµÄindex
+    bool garbage;   // æ˜¯å¦æœ‰åƒåœ¾(å³å…ƒç´ è¢«æ ‡è®°ä¸ºåˆ é™¤)
+    bool recycle;   // æ˜¯å¦å¾ªç¯åˆ©ç”¨å·²æ ‡è®°ä¸ºåˆ é™¤çš„index
 };
 
 
@@ -2398,14 +2398,14 @@ operator=(const PolyhedralMesh<P, T>& rhs)
 {
     if (this != &rhs)
     {
-        // ÊôĞÔÈİÆ÷µÄÉî¿½±´
+        // å±æ€§å®¹å™¨çš„æ·±æ‹·è´
         vprops = rhs.vprops;
         eprops = rhs.eprops;
         fprops = rhs.fprops;
         cprops = rhs.cprops;
 
-        // PropertyMap´æ×ÅÖ¸ÏòÊôĞÔµÄÖ¸Õë, ±ØĞëÖØĞÂ¸³Öµ
-        // ÓÉÓÚPropertyContainerÒÑ¸üĞÂ, ËùÒÔµÃµ½µÄÊÇĞÂµÄpmap
+        // PropertyMapå­˜ç€æŒ‡å‘å±æ€§çš„æŒ‡é’ˆ, å¿…é¡»é‡æ–°èµ‹å€¼
+        // ç”±äºPropertyContainerå·²æ›´æ–°, æ‰€ä»¥å¾—åˆ°çš„æ˜¯æ–°çš„pmap
         vtopo = get_property_map<VertexIndex, VertexTopo>("v:topology").first;
         etopo = get_property_map<EdgeIndex, EdgeTopo>("e:topology").first;
         ftopo = get_property_map<FaceIndex, FaceTopo>("f:topology").first;
@@ -2438,21 +2438,21 @@ template<typename P, typename T>
 void PolyhedralMesh<P, T>::
 clear()
 {
-    // step1 Çå³ıËùÓĞÊôĞÔÕ¼ÓÃµÄÄÚ´æ¿Õ¼ä
+    // step1 æ¸…é™¤æ‰€æœ‰å±æ€§å ç”¨çš„å†…å­˜ç©ºé—´
 
-    // ´ËÊ±ÄÚ´æ¿Õ¼äÈÔÎ´ÊÍ·Å
+    // æ­¤æ—¶å†…å­˜ç©ºé—´ä»æœªé‡Šæ”¾
     vprops.resize(0);
     eprops.resize(0);
     fprops.resize(0);
     cprops.resize(0);
 
-    // ÊÍ·ÅÄÚ´æ¿Õ¼ä
+    // é‡Šæ”¾å†…å­˜ç©ºé—´
     vprops.shrink_to_fit();
     eprops.shrink_to_fit();
     fprops.shrink_to_fit();
     cprops.shrink_to_fit();
 
-    //TODO »¹Ã»Ğ´ÍêÄØÎ¹(#`O¡ä)
+    //TODO è¿˜æ²¡å†™å®Œå‘¢å–‚(#`Oâ€²)
     removed_vertices = removed_edges = removed_faces = removed_cells = 0;
     vertices_freelist = edges_freelist = faces_freelist = cells_freelist
         = std::numeric_limits<size_type>::max();
@@ -2460,7 +2460,7 @@ clear()
     garbage = false;
     recycle = true;
 
-    // step2 Çå³ı¸½¼ÓµÄÊôĞÔ
+    // step2 æ¸…é™¤é™„åŠ çš„å±æ€§
     remove_all_attached_property_maps();
 }
 
