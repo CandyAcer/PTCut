@@ -2,6 +2,8 @@
 
 PTCut is a computational geometric algorithm that implemented in C++. It can compute Boolean Operations on surface and polyhedral mesh in a robust and efficient manner.
 
+![IO](./data/img/IO.png)
+
 ### 1. Highlight
 
 Mesh Booleans are an essential tool to create and edit digital shapes among geometry processing tasks. However, Booleans on two surface mesh, surface mesh and tetrahedral grid, surface mesh and hexahedral grid form the predominant part of current methods. I present a novel method to compute Boolean operations on surface and polyhedral mesh.
